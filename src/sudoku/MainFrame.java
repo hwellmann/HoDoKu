@@ -19,7 +19,6 @@
 package sudoku;
 
 
-import generator.BackgroundGeneratorThread;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -67,6 +66,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -85,6 +85,8 @@ import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileFilter;
+
+import generator.BackgroundGeneratorThread;
 import solver.SudokuSolver;
 import solver.SudokuSolverFactory;
 
@@ -98,7 +100,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
     public static final String VERSION = "HoDoKu - v2.3.0 beta";
 //    public static final String BUILD = "Build 16";
     public static final String BUILD;
-    public static final String REV = "$LastChangedRevision$";
+    public static final String REV = "$LastChangedRevision: 999999 $";
     /** The size of the toggle button icons */
     private static final int TOGGLE_BUTTON_ICON_SIZE = 32;
     private SudokuPanel sudokuPanel;
@@ -197,10 +199,10 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
     private String sudokuFileName = null;
     /** The file type of the last loaded sudoku file: 1 .. hsol, 8 .. txt or 9 .. ss */
     private int sudokuFileType = -1;
-    
+
     /** Incorporates the last subversion revision of this file into
      *  the version string.<br><br>
-     * 
+     *
      * CAUTION: MainFrame.java must be changed and committed to change
      * the build number.
      */
@@ -208,10 +210,10 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         String[] dummy = REV.split(" ");
         BUILD = "Build " + dummy[1];
     }
-  
-    
+
+
     /** Creates new form MainFrame
-     * @param launchFile 
+     * @param launchFile
      */
     @SuppressWarnings({"LeakingThisInConstructor", "unchecked"})
     public MainFrame(String launchFile) {
@@ -637,9 +639,11 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         setTitle(bundle.getString("MainFrame.title")); // NOI18N
         setIconImage(getIcon());
         addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
             }
+            @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
@@ -668,6 +672,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 
         statusPanelColor1.setToolTipText(bundle.getString("MainFrame.statusPanelColor1.toolTipText")); // NOI18N
         statusPanelColor1.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 statusPanelColor1MouseClicked(evt);
             }
@@ -688,6 +693,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 
         statusPanelColor2.setToolTipText(bundle.getString("MainFrame.statusPanelColor2.toolTipText")); // NOI18N
         statusPanelColor2.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 statusPanelColor2MouseClicked(evt);
             }
@@ -708,6 +714,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 
         statusPanelColor3.setToolTipText(bundle.getString("MainFrame.statusPanelColor3.toolTipText")); // NOI18N
         statusPanelColor3.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 statusPanelColor3MouseClicked(evt);
             }
@@ -728,6 +735,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 
         statusPanelColor4.setToolTipText(bundle.getString("MainFrame.statusPanelColor4.toolTipText")); // NOI18N
         statusPanelColor4.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 statusPanelColor4MouseClicked(evt);
             }
@@ -748,6 +756,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 
         statusPanelColor5.setToolTipText(bundle.getString("MainFrame.statusPanelColor5.toolTipText")); // NOI18N
         statusPanelColor5.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 statusPanelColor5MouseClicked(evt);
             }
@@ -768,6 +777,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 
         statusPanelColorClear.setToolTipText(bundle.getString("MainFrame.statusPanelColorClear.toolTipText")); // NOI18N
         statusPanelColorClear.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 statusPanelColorClearMouseClicked(evt);
             }
@@ -788,6 +798,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 
         statusPanelColorReset.setToolTipText(bundle.getString("MainFrame.statusPanelColorReset.toolTipText")); // NOI18N
         statusPanelColorReset.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 statusPanelColorResetMouseClicked(evt);
             }
@@ -811,6 +822,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         statusLabelCellCandidate.setText(bundle.getString("MainFrame.statusLabelCellCandidate.text.cell")); // NOI18N
         statusLabelCellCandidate.setToolTipText(bundle.getString("MainFrame.statusLabelCellCandidate.toolTipText")); // NOI18N
         statusLabelCellCandidate.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 statusLabelCellCandidateMouseClicked(evt);
             }
@@ -849,6 +861,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         undoToolButton.setEnabled(false);
         undoToolButton.setRequestFocusEnabled(false);
         undoToolButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 undoToolButtonActionPerformed(evt);
             }
@@ -860,6 +873,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         redoToolButton.setEnabled(false);
         redoToolButton.setRequestFocusEnabled(false);
         redoToolButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 redoToolButtonActionPerformed(evt);
             }
@@ -873,6 +887,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         neuesSpielToolButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/hodoku02-32.png"))); // NOI18N
         neuesSpielToolButton.setToolTipText(bundle.getString("MainFrame.neuesSpielToolButton.toolTipText")); // NOI18N
         neuesSpielToolButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 neuesSpielToolButtonActionPerformed(evt);
             }
@@ -888,6 +903,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         levelComboBox.setMinimumSize(new java.awt.Dimension(15, 8));
         levelComboBox.setPreferredSize(new java.awt.Dimension(20, 10));
         levelComboBox.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 levelComboBoxActionPerformed(evt);
             }
@@ -906,6 +922,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         redGreenToggleButton.setToolTipText(bundle.getString("MainFrame.redGreenToggleButton.toolTipText")); // NOI18N
         redGreenToggleButton.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/img/rgSelected1.png"))); // NOI18N
         redGreenToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 redGreenToggleButtonActionPerformed(evt);
             }
@@ -915,6 +932,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         f1ToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/f_1c.png"))); // NOI18N
         f1ToggleButton.setToolTipText(bundle.getString("MainFrame.f1ToggleButton.toolTipText")); // NOI18N
         f1ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 f1ToggleButtonActionPerformed1(evt);
             }
@@ -924,6 +942,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         f2ToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/f_2c.png"))); // NOI18N
         f2ToggleButton.setToolTipText(bundle.getString("MainFrame.f2ToggleButton.toolTipText")); // NOI18N
         f2ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 f1ToggleButtonActionPerformed(evt);
             }
@@ -933,6 +952,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         f3ToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/f_3c.png"))); // NOI18N
         f3ToggleButton.setToolTipText(bundle.getString("MainFrame.f3ToggleButton.toolTipText")); // NOI18N
         f3ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 f1ToggleButtonActionPerformed(evt);
             }
@@ -942,6 +962,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         f4ToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/f_4c.png"))); // NOI18N
         f4ToggleButton.setToolTipText(bundle.getString("MainFrame.f4ToggleButton.toolTipText")); // NOI18N
         f4ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 f1ToggleButtonActionPerformed(evt);
             }
@@ -951,6 +972,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         f5ToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/f_5c.png"))); // NOI18N
         f5ToggleButton.setToolTipText(bundle.getString("MainFrame.f5ToggleButton.toolTipText")); // NOI18N
         f5ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 f1ToggleButtonActionPerformed(evt);
             }
@@ -960,6 +982,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         f6ToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/f_6c.png"))); // NOI18N
         f6ToggleButton.setToolTipText(bundle.getString("MainFrame.f6ToggleButton.toolTipText")); // NOI18N
         f6ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 f1ToggleButtonActionPerformed(evt);
             }
@@ -969,6 +992,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         f7ToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/f_7c.png"))); // NOI18N
         f7ToggleButton.setToolTipText(bundle.getString("MainFrame.f7ToggleButton.toolTipText")); // NOI18N
         f7ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 f1ToggleButtonActionPerformed(evt);
             }
@@ -978,6 +1002,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         f8ToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/f_8c.png"))); // NOI18N
         f8ToggleButton.setToolTipText(bundle.getString("MainFrame.f8ToggleButton.toolTipText")); // NOI18N
         f8ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 f1ToggleButtonActionPerformed(evt);
             }
@@ -987,6 +1012,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         f9ToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/f_9c.png"))); // NOI18N
         f9ToggleButton.setToolTipText(bundle.getString("MainFrame.f9ToggleButton.toolTipText")); // NOI18N
         f9ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 f1ToggleButtonActionPerformed(evt);
             }
@@ -999,6 +1025,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         fxyToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         fxyToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         fxyToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fxyToggleButtonf1ToggleButtonActionPerformed(evt);
             }
@@ -1011,6 +1038,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         outerSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         outerSplitPane.setResizeWeight(1.0);
         outerSplitPane.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            @Override
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 outerSplitPanePropertyChange(evt);
             }
@@ -1018,6 +1046,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 
         hintPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("MainFrame.hintPanel.border.title"))); // NOI18N
         hintPanel.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            @Override
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 hintPanelPropertyChange(evt);
             }
@@ -1027,6 +1056,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         neuerHinweisButton.setText(bundle.getString("MainFrame.neuerHinweisButton.text")); // NOI18N
         neuerHinweisButton.setToolTipText(bundle.getString("MainFrame.neuerHinweisButton.toolTipText")); // NOI18N
         neuerHinweisButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 neuerHinweisButtonActionPerformed(evt);
             }
@@ -1037,6 +1067,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         hinweisAusfuehrenButton.setToolTipText(bundle.getString("MainFrame.hinweisAusfuehrenButton.toolTipText")); // NOI18N
         hinweisAusfuehrenButton.setEnabled(false);
         hinweisAusfuehrenButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hinweisAusfuehrenButtonActionPerformed(evt);
             }
@@ -1046,6 +1077,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         solveUpToButton.setText(bundle.getString("MainFrame.solveUpToButton.text")); // NOI18N
         solveUpToButton.setToolTipText(bundle.getString("MainFrame.solveUpToButton.toolTipText")); // NOI18N
         solveUpToButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 solveUpToButtonActionPerformed(evt);
             }
@@ -1056,6 +1088,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         hinweisAbbrechenButton.setToolTipText(bundle.getString("MainFrame.hinweisAbbrechenButton.toolTipText")); // NOI18N
         hinweisAbbrechenButton.setEnabled(false);
         hinweisAbbrechenButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hinweisAbbrechenButtonActionPerformed(evt);
             }
@@ -1112,6 +1145,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         neuMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.neuMenuItemMnemonic").charAt(0));
         neuMenuItem.setText(bundle.getString("MainFrame.neuMenuItem.text")); // NOI18N
         neuMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 neuMenuItemActionPerformed(evt);
             }
@@ -1123,6 +1157,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         loadPuzzleMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.loadMenuItemMnemonic").charAt(0));
         loadPuzzleMenuItem.setText(bundle.getString("MainFrame.loadPuzzleMenuItem.text")); // NOI18N
         loadPuzzleMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadPuzzleMenuItemActionPerformed(evt);
             }
@@ -1134,6 +1169,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         savePuzzleMenuItem.setText(bundle.getString("MainFrame.savePuzzleMenuItem.text")); // NOI18N
         savePuzzleMenuItem.setEnabled(false);
         savePuzzleMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 savePuzzleMenuItemActionPerformed(evt);
             }
@@ -1144,6 +1180,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         savePuzzleAsMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.saveAsMenuItemMnemonic").charAt(0));
         savePuzzleAsMenuItem.setText(bundle.getString("MainFrame.savePuzzleAsMenuItem.text")); // NOI18N
         savePuzzleAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 savePuzzleAsMenuItemActionPerformed(evt);
             }
@@ -1153,6 +1190,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         loadConfigMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.loadConfigMenuItem.mnemonic").charAt(0));
         loadConfigMenuItem.setText(bundle.getString("MainFrame.loadConfigMenuItem.text")); // NOI18N
         loadConfigMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadConfigMenuItemActionPerformed(evt);
             }
@@ -1162,6 +1200,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         saveConfigAsMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.saveConfigAsMenuItem.mnemonic").charAt(0));
         saveConfigAsMenuItem.setText(bundle.getString("MainFrame.saveConfigAsMenuItem.text")); // NOI18N
         saveConfigAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveConfigAsMenuItemActionPerformed(evt);
             }
@@ -1172,6 +1211,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         seiteEinrichtenMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.seiteEinrichtenMenuItemMnemonic").charAt(0));
         seiteEinrichtenMenuItem.setText(bundle.getString("MainFrame.seiteEinrichtenMenuItem.text")); // NOI18N
         seiteEinrichtenMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 seiteEinrichtenMenuItemActionPerformed(evt);
             }
@@ -1182,6 +1222,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         druckenMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.druckenMenuItemMnemonic").charAt(0));
         druckenMenuItem.setText(bundle.getString("MainFrame.druckenMenuItem.text")); // NOI18N
         druckenMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 druckenMenuItemActionPerformed(evt);
             }
@@ -1191,6 +1232,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         extendedPrintMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.extendedPrintMenuItem.mnemonic").charAt(0));
         extendedPrintMenuItem.setText(bundle.getString("MainFrame.extendedPrintMenuItem.text")); // NOI18N
         extendedPrintMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 extendedPrintMenuItemActionPerformed(evt);
             }
@@ -1200,6 +1242,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         speichernAlsBildMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.speichernAlsBildMenuItemMnemonic").charAt(0));
         speichernAlsBildMenuItem.setText(bundle.getString("MainFrame.speichernAlsBildMenuItem.text")); // NOI18N
         speichernAlsBildMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 speichernAlsBildMenuItemActionPerformed(evt);
             }
@@ -1210,6 +1253,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         spielEingebenMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.spielEingebenMenuItemMnemonic").charAt(0));
         spielEingebenMenuItem.setText(bundle.getString("MainFrame.spielEingebenMenuItem.text")); // NOI18N
         spielEingebenMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 spielEingebenMenuItemActionPerformed(evt);
             }
@@ -1219,6 +1263,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         spielEditierenMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("spielEditierenMenuItemMnemonic").charAt(0));
         spielEditierenMenuItem.setText(bundle.getString("MainFrame.spielEditierenMenuItem.text")); // NOI18N
         spielEditierenMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 spielEditierenMenuItemActionPerformed(evt);
             }
@@ -1229,6 +1274,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         spielSpielenMenuItem.setText(bundle.getString("MainFrame.spielSpielenMenuItem.text")); // NOI18N
         spielSpielenMenuItem.setEnabled(false);
         spielSpielenMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 spielSpielenMenuItemActionPerformed(evt);
             }
@@ -1240,6 +1286,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         beendenMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.beendenMenuItemMnemonic").charAt(0));
         beendenMenuItem.setText(bundle.getString("MainFrame.beendenMenuItem.text")); // NOI18N
         beendenMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 beendenMenuItemActionPerformed(evt);
             }
@@ -1256,6 +1303,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         undoMenuItem.setText(bundle.getString("MainFrame.undoMenuItem.text")); // NOI18N
         undoMenuItem.setEnabled(false);
         undoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 undoMenuItemActionPerformed(evt);
             }
@@ -1267,6 +1315,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         redoMenuItem.setText(bundle.getString("MainFrame.redoMenuItem.text")); // NOI18N
         redoMenuItem.setEnabled(false);
         redoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 redoMenuItemActionPerformed(evt);
             }
@@ -1278,6 +1327,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         copyCluesMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.copyCluesMenuItemMnemonic").charAt(0));
         copyCluesMenuItem.setText(bundle.getString("MainFrame.copyCluesMenuItem.text")); // NOI18N
         copyCluesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyCluesMenuItemActionPerformed(evt);
             }
@@ -1287,6 +1337,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         copyFilledMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.copyFilledMenuItemMnemonic").charAt(0));
         copyFilledMenuItem.setText(bundle.getString("MainFrame.copyFilledMenuItem.text")); // NOI18N
         copyFilledMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyFilledMenuItemActionPerformed(evt);
             }
@@ -1297,6 +1348,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         copyPmGridMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.copyPmGridMenuItemMnemonic").charAt(0));
         copyPmGridMenuItem.setText(bundle.getString("MainFrame.copyPmGridMenuItem.text")); // NOI18N
         copyPmGridMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyPmGridMenuItemActionPerformed(evt);
             }
@@ -1306,6 +1358,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         copyPmGridWithStepMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.copyPmGridWithStepMenuItemMnemonic").charAt(0));
         copyPmGridWithStepMenuItem.setText(bundle.getString("MainFrame.copyPmGridWithStepMenuItem.text")); // NOI18N
         copyPmGridWithStepMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyPmGridWithStepMenuItemActionPerformed(evt);
             }
@@ -1315,6 +1368,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         copyLibraryMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.copyLibraryMenuItemMnemonic").charAt(0));
         copyLibraryMenuItem.setText(bundle.getString("MainFrame.copyLibraryMenuItem.text")); // NOI18N
         copyLibraryMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copyLibraryMenuItemActionPerformed(evt);
             }
@@ -1324,6 +1378,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         copySSMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.copySSMenuItem.mnemonic").charAt(0));
         copySSMenuItem.setText(bundle.getString("MainFrame.copySSMenuItem.text")); // NOI18N
         copySSMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 copySSMenuItemActionPerformed(evt);
             }
@@ -1334,6 +1389,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         pasteMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.pasteMenuItemMnemonic").charAt(0));
         pasteMenuItem.setText(bundle.getString("MainFrame.pasteMenuItem.text")); // NOI18N
         pasteMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pasteMenuItemActionPerformed(evt);
             }
@@ -1345,6 +1401,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         restartSpielMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.restartSpielMenuItemMnemonic").charAt(0));
         restartSpielMenuItem.setText(bundle.getString("MainFrame.restartSpielMenuItem.text")); // NOI18N
         restartSpielMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 restartSpielMenuItemActionPerformed(evt);
             }
@@ -1354,6 +1411,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         resetSpielMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.resetSpielMenuItemMnemonic").charAt(0));
         resetSpielMenuItem.setText(bundle.getString("MainFrame.resetSpielMenuItem.text")); // NOI18N
         resetSpielMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resetSpielMenuItemActionPerformed(evt);
             }
@@ -1365,6 +1423,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         configMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.configMenuItemMnemonic").charAt(0));
         configMenuItem.setText(bundle.getString("MainFrame.configMenuItem.text")); // NOI18N
         configMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 configMenuItemActionPerformed(evt);
             }
@@ -1381,6 +1440,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         playingMenuItem.setSelected(true);
         playingMenuItem.setText(bundle.getString("MainFrame.playingMenuItem.text")); // NOI18N
         playingMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playingMenuItemActionPerformed(evt);
             }
@@ -1391,6 +1451,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         learningMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.learningMenuItem.mnemonic").charAt(0));
         learningMenuItem.setText(bundle.getString("MainFrame.learningMenuItem.text")); // NOI18N
         learningMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 learningMenuItemActionPerformed(evt);
             }
@@ -1401,6 +1462,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         practisingMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.practisingMenuItem.mnemonic").charAt(0));
         practisingMenuItem.setText(bundle.getString("MainFrame.practisingMenuItem.text")); // NOI18N
         practisingMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 practisingMenuItemActionPerformed(evt);
             }
@@ -1415,6 +1477,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         showCandidatesMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.showCandidatesMenuItemMnemonic").charAt(0));
         showCandidatesMenuItem.setText(bundle.getString("MainFrame.showCandidatesMenuItem.text")); // NOI18N
         showCandidatesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showCandidatesMenuItemActionPerformed(evt);
             }
@@ -1424,6 +1487,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         showWrongValuesMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.showWrongValuesMenuItemMnemonic").charAt(0));
         showWrongValuesMenuItem.setText(bundle.getString("MainFrame.showWrongValuesMenuItem.text")); // NOI18N
         showWrongValuesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showWrongValuesMenuItemActionPerformed(evt);
             }
@@ -1434,6 +1498,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         showDeviationsMenuItem.setSelected(true);
         showDeviationsMenuItem.setText(bundle.getString("MainFrame.showDeviationsMenuItem.text")); // NOI18N
         showDeviationsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showDeviationsMenuItemActionPerformed(evt);
             }
@@ -1444,6 +1509,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         showColorKuMenuItem.setSelected(true);
         showColorKuMenuItem.setText(bundle.getString("MainFrame.showColorKuMenuItem.text")); // NOI18N
         showColorKuMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showColorKuMenuItemActionPerformed(evt);
             }
@@ -1456,6 +1522,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         colorCellsMenuItem.setSelected(true);
         colorCellsMenuItem.setText(bundle.getString("MainFrame.colorCellsMenuItem.text")); // NOI18N
         colorCellsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 colorCellsMenuItemActionPerformed(evt);
             }
@@ -1466,6 +1533,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         colorCandidatesMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.colorCandidatesMenuItem.mnemonic").charAt(0));
         colorCandidatesMenuItem.setText(bundle.getString("MainFrame.colorCandidatesMenuItem.text")); // NOI18N
         colorCandidatesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 colorCandidatesMenuItemActionPerformed(evt);
             }
@@ -1480,6 +1548,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         levelLeichtMenuItem.setSelected(true);
         levelLeichtMenuItem.setText("Leicht"); // NOI18N
         levelLeichtMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 levelLeichtMenuItemActionPerformed(evt);
             }
@@ -1489,6 +1558,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         levelButtonGroup.add(levelMittelMenuItem);
         levelMittelMenuItem.setText("Mittel"); // NOI18N
         levelMittelMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 levelMittelMenuItemActionPerformed(evt);
             }
@@ -1498,6 +1568,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         levelButtonGroup.add(levelKniffligMenuItem);
         levelKniffligMenuItem.setText("Schwer\n"); // NOI18N
         levelKniffligMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 levelKniffligMenuItemActionPerformed(evt);
             }
@@ -1507,6 +1578,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         levelButtonGroup.add(levelSchwerMenuItem);
         levelSchwerMenuItem.setText("Unfair"); // NOI18N
         levelSchwerMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 levelSchwerMenuItemActionPerformed(evt);
             }
@@ -1516,6 +1588,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         levelButtonGroup.add(levelExtremMenuItem);
         levelExtremMenuItem.setText("Extrem"); // NOI18N
         levelExtremMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 levelExtremMenuItemActionPerformed(evt);
             }
@@ -1533,6 +1606,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         vageHintMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.vageHintMenuItemMnemonic").charAt(0));
         vageHintMenuItem.setText(bundle.getString("MainFrame.vageHintMenuItem")); // NOI18N
         vageHintMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 vageHintMenuItemActionPerformed(evt);
             }
@@ -1543,6 +1617,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         mediumHintMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.mediumHintMenuItemMnemonic").charAt(0));
         mediumHintMenuItem.setText(bundle.getString("MainFrame.mediumHintMenuItem.text")); // NOI18N
         mediumHintMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mediumHintMenuItemActionPerformed(evt);
             }
@@ -1553,6 +1628,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         loesungsSchrittMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.loesungsSchrittMenuItemMnemonic").charAt(0));
         loesungsSchrittMenuItem.setText(bundle.getString("MainFrame.loesungsSchrittMenuItem.text")); // NOI18N
         loesungsSchrittMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loesungsSchrittMenuItemActionPerformed(evt);
             }
@@ -1563,6 +1639,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         backdoorSearchMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.backdoorSearchMenuItem.mnemonic").charAt(0));
         backdoorSearchMenuItem.setText(bundle.getString("MainFrame.backdoorSearchMenuItem.text")); // NOI18N
         backdoorSearchMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 backdoorSearchMenuItemActionPerformed(evt);
             }
@@ -1572,6 +1649,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         historyMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.historyMenuItem.mnemonic").charAt(0));
         historyMenuItem.setText(bundle.getString("MainFrame.historyMenuItem.text")); // NOI18N
         historyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 historyMenuItemActionPerformed(evt);
             }
@@ -1581,6 +1659,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         createSavePointMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.setSavePointMenuItem.mnemonic").charAt(0));
         createSavePointMenuItem.setText(bundle.getString("MainFrame.createSavePointMenuItem.text")); // NOI18N
         createSavePointMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createSavePointMenuItemActionPerformed(evt);
             }
@@ -1590,6 +1669,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         restoreSavePointMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.restoreSavePointMenuItem.mnemonic").charAt(0));
         restoreSavePointMenuItem.setText(bundle.getString("MainFrame.restoreSavePointMenuItem.text")); // NOI18N
         restoreSavePointMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 restoreSavePointMenuItemActionPerformed(evt);
             }
@@ -1600,6 +1680,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         setGivensMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.setGivensMenuItem.mnemonic").charAt(0));
         setGivensMenuItem.setText(bundle.getString("MainFrame.setGivensMenuItem.text")); // NOI18N
         setGivensMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setGivensMenuItemActionPerformed(evt);
             }
@@ -1611,6 +1692,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         alleHiddenSinglesSetzenMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.alleHiddenSinglesSetzenMenuItemMnemonic").charAt(0));
         alleHiddenSinglesSetzenMenuItem.setText(bundle.getString("MainFrame.alleHiddenSinglesSetzenMenuItem.text")); // NOI18N
         alleHiddenSinglesSetzenMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 alleHiddenSinglesSetzenMenuItemActionPerformed(evt);
             }
@@ -1628,6 +1710,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         sudokuOnlyMenuItem.setSelected(true);
         sudokuOnlyMenuItem.setText(bundle.getString("MainFrame.sudokuOnlyMenuItem.text")); // NOI18N
         sudokuOnlyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sudokuOnlyMenuItemActionPerformed(evt);
             }
@@ -1640,6 +1723,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         summaryMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.summaryMenuItemMnemonic").charAt(0));
         summaryMenuItem.setText(bundle.getString("MainFrame.summaryMenuItem.text")); // NOI18N
         summaryMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 summaryMenuItemActionPerformed(evt);
             }
@@ -1651,6 +1735,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         solutionMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.solutionMenuItemMnemonic").charAt(0));
         solutionMenuItem.setText(bundle.getString("MainFrame.solutionMenuItem.text")); // NOI18N
         solutionMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 solutionMenuItemActionPerformed(evt);
             }
@@ -1662,6 +1747,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         allStepsMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.allStepsMenuItemMnemonic").charAt(0));
         allStepsMenuItem.setText(bundle.getString("MainFrame.allStepsMenuItem.text")); // NOI18N
         allStepsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 allStepsMenuItemActionPerformed(evt);
             }
@@ -1673,6 +1759,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         cellZoomMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.cellZoomMenuItemMnemonic").charAt(0));
         cellZoomMenuItem.setText(bundle.getString("MainFrame.cellZoomMenuItem.text")); // NOI18N
         cellZoomMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cellZoomMenuItemActionPerformed(evt);
             }
@@ -1684,6 +1771,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         showHintPanelMenuItem.setSelected(true);
         showHintPanelMenuItem.setText(bundle.getString("MainFrame.showHintPanelMenuItem.text")); // NOI18N
         showHintPanelMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showHintPanelMenuItemActionPerformed(evt);
             }
@@ -1694,6 +1782,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         showToolBarMenuItem.setSelected(true);
         showToolBarMenuItem.setText(bundle.getString("MainFrame.showToolBarMenuItem.text")); // NOI18N
         showToolBarMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showToolBarMenuItemActionPerformed(evt);
             }
@@ -1703,6 +1792,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         showHintButtonsCheckBoxMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.showHintButtonsCheckBoxMenuItem.mnemonic").charAt(0));
         showHintButtonsCheckBoxMenuItem.setText(bundle.getString("MainFrame.showHintButtonsCheckBoxMenuItem.text")); // NOI18N
         showHintButtonsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showHintButtonsCheckBoxMenuItemActionPerformed(evt);
             }
@@ -1713,6 +1803,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         fullScreenMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.fullScreenMenuItem.mnemonic").charAt(0));
         fullScreenMenuItem.setText(bundle.getString("MainFrame.fullScreenMenuItem.text")); // NOI18N
         fullScreenMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fullScreenMenuItemActionPerformed(evt);
             }
@@ -1723,6 +1814,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         resetViewMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.resetViewMenuItemMnemonic").charAt(0));
         resetViewMenuItem.setText(bundle.getString("MainFrame.resetViewMenuItem.text")); // NOI18N
         resetViewMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resetViewMenuItemActionPerformed(evt);
             }
@@ -1737,6 +1829,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         keyMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.keyMenuItem.mnemonic").charAt(0));
         keyMenuItem.setText(bundle.getString("MainFrame.keyMenuItem.text")); // NOI18N
         keyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 keyMenuItemActionPerformed(evt);
             }
@@ -1747,6 +1840,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         userManualMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.userManualMenuItem.mnemonic").charAt(0));
         userManualMenuItem.setText(bundle.getString("MainFrame.userManualMenuItem.text")); // NOI18N
         userManualMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 userManualMenuItemActionPerformed(evt);
             }
@@ -1756,6 +1850,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         solvingGuideMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.solvingGuideMenuItem.mnemonic").charAt(0));
         solvingGuideMenuItem.setText(bundle.getString("MainFrame.solvingGuideMenuItem.text")); // NOI18N
         solvingGuideMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 solvingGuideMenuItemActionPerformed(evt);
             }
@@ -1765,6 +1860,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         projectHomePageMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.projectHomePageMenuItem.mnemonic").charAt(0));
         projectHomePageMenuItem.setText(bundle.getString("MainFrame.projectHomePageMenuItem.text")); // NOI18N
         projectHomePageMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 projectHomePageMenuItemActionPerformed(evt);
             }
@@ -1775,6 +1871,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         reportErrorMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.reportErrorMenuItem.mnemonic").charAt(0));
         reportErrorMenuItem.setText(bundle.getString("MainFrame.reportErrorMenuItem.text")); // NOI18N
         reportErrorMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reportErrorMenuItemActionPerformed(evt);
             }
@@ -1784,6 +1881,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         askQuestionMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.askQuestionMenuItem.mnemonic").charAt(0));
         askQuestionMenuItem.setText(bundle.getString("MainFrame.askQuestionMenuItem.text")); // NOI18N
         askQuestionMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 askQuestionMenuItemActionPerformed(evt);
             }
@@ -1794,6 +1892,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
         aboutMenuItem.setMnemonic(java.util.ResourceBundle.getBundle("intl/MainFrame").getString("MainFrame.aboutMenuItem.").charAt(0));
         aboutMenuItem.setText(bundle.getString("MainFrame.aboutMenuItem.text")); // NOI18N
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 aboutMenuItemActionPerformed(evt);
             }
@@ -2103,7 +2202,7 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
 //        fixFocus();
     }//GEN-LAST:event_hinweisAbbrechenButtonActionPerformed
 
-    private void hinweisAusfuehrenButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                       
+    private void hinweisAusfuehrenButtonActionPerformed(java.awt.event.ActionEvent evt) {
         sudokuPanel.doStep();
         sudokuPanel.checkProgress();
         hinweisTextArea.setText("");
@@ -2116,11 +2215,11 @@ public class MainFrame extends javax.swing.JFrame implements FlavorListener {
             abortStepToggleButton.setEnabled(false);
         }
         fixFocus();
-    }                                                       
+    }
 
-    private void loesungsSchrittMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                       
+    private void loesungsSchrittMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         getHint(2);
-    }                                                       
+    }
 
     private void neuerHinweisButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_neuerHinweisButtonActionPerformed
         loesungsSchrittMenuItemActionPerformed(evt);
@@ -2635,7 +2734,7 @@ private void extendedPrintMenuItemActionPerformed(java.awt.event.ActionEvent evt
     /**
      * Gets a new hint for the sudoku if possible. Checks are made to ensure,
      * that hints are only displayed for valid puzzles.
-     * 
+     *
      * @param mode <code>0</code> for "vage hint", <code>1</code> for "concrete
      * hint" and <code>2</code> for "show next step".
      */
@@ -3033,9 +3132,9 @@ private void extendedPrintMenuItemActionPerformed(java.awt.event.ActionEvent evt
      * Copy the current sudoku to the clipboard. If <code>simpleSudoku</code>
      * is set to <code>true</code>, the givensm the currently set cells and
      * a PM grid are copied.
-     * 
+     *
      * @param mode
-     * @param simpleSudoku 
+     * @param simpleSudoku
      */
     private void copyToClipboard(ClipboardMode mode, boolean simpleSudoku) {
         String clipStr = "";
@@ -3177,12 +3276,12 @@ private void extendedPrintMenuItemActionPerformed(java.awt.event.ActionEvent evt
      * is one of the file types defined by {@link MyFileFilter}. If the method
      * is called via the "Save puzzle" menu item, <code>filterType</code> can be
      * 8 (generic text file). In this case a PM grid is written.
-     * 
+     *
      * @param puzzle
      * @param path
      * @param filterType
      * @throws FileNotFoundException
-     * @throws IOException 
+     * @throws IOException
      */
     private void saveToFile(boolean puzzle, String path, int filterType) throws FileNotFoundException, IOException {
         sudokuFileName = path;
@@ -3757,7 +3856,7 @@ private void extendedPrintMenuItemActionPerformed(java.awt.event.ActionEvent evt
     /**
      * Handles the display of the hint buttons in the toolbar.
      * If they are made visible the first time, they have to be created.
-     * 
+     *
      */
     private void setShowHintButtonsInToolbar() {
         if (vageHintToggleButton == null) {
@@ -3858,7 +3957,7 @@ private void extendedPrintMenuItemActionPerformed(java.awt.event.ActionEvent evt
 
     /**
      * Action event for hint buttons
-     * @param isVage 
+     * @param isVage
      */
     private void hintToggleButtonActionPerformed(boolean isVage) {
         if (isVage) {
