@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with HoDoKu. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * This code is actually a Java port of code posted by Glenn Fowler
  * in the Sudoku Player's Forum (http://www.setbb.com/sudoku).
  * Many thanks for letting me use it!
@@ -25,8 +25,11 @@ package generator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sudoku.ConfigGeneratorPanel;
 import sudoku.Options;
 import sudoku.Sudoku2;
 import sudoku.SudokuSinglesQueue;
@@ -34,13 +37,15 @@ import sudoku.SudokuStatus;
 
 /**
  * Bit based backtracking solver.
- * 
+ *
  * @author hobiwan
  */
 public class SudokuGenerator {
+    private static Logger log = LoggerFactory.getLogger(SudokuGenerator.class);
+
     /** Debug flag */
     private static final boolean DEBUG = false;
-    
+
     /** Maximum number of tries when generating a puzzle using a pattern */
     private static final int MAX_TRIES = 1000000;
 
@@ -83,7 +88,6 @@ public class SudokuGenerator {
     private int anzClues = 0;
     private long nanos = 0;
     private long setNanos = 0;
-    private long actSetNanos = 0;
 
     /** Creates a new instance of SudokuGenerator */
     protected SudokuGenerator() {
@@ -95,7 +99,7 @@ public class SudokuGenerator {
     /**
      * Checks if <code>sudoku</code> has exactly one solution. If it
      * has, the solution is stored in the sudoku.
-     * 
+     *
      * @param sudoku
      * @return 0 (invalid), 1 (valid), or 2 (multiple solutions)
      */
@@ -106,14 +110,14 @@ public class SudokuGenerator {
             sudoku.setSolution(Arrays.copyOf(solution, solution.length));
         }
         ticks = System.currentTimeMillis() - ticks;
-        Logger.getLogger(getClass().getName()).log(Level.FINE, "validSolution() {0}ms", ticks);
+        log.debug("validSolution() {} ms", ticks);
         return solutionCount;
     }
-    
+
     /**
      * Checks if <code>sudoku</code> has exactly one solution. If it
      * has, the solution is stored in the sudoku.
-     * 
+     *
      * @param sudoku
      * @return
      */
@@ -125,7 +129,7 @@ public class SudokuGenerator {
             sudoku.setSolution(Arrays.copyOf(solution, solution.length));
         }
         ticks = System.currentTimeMillis() - ticks;
-        Logger.getLogger(getClass().getName()).log(Level.FINE, "validSolution() {0}ms", ticks);
+        log.debug("validSolution() {} ms", ticks);
         return unique;
     }
 
@@ -168,10 +172,10 @@ public class SudokuGenerator {
 
     /**
      * Solves a sudoku given by a 81 int array.
-     * @param cellValues 
+     * @param cellValues
      */
     public void solve(int[] cellValues) {
-//        System.out.println("start solving " + getSolutionAsString(cellValues));
+//        log.debug("start solving " + getSolutionAsString(cellValues));
 //        actSetNanos = System.nanoTime();
         // start with an empty sudoku
         stack[0].sudoku.set(EMPTY_GRID);
@@ -187,7 +191,7 @@ public class SudokuGenerator {
 //            }
 //        }
         // set up the sudoku
-//        System.out.println("setting up sudoku...");
+//        log.debug("setting up sudoku...");
         for (int i = 0; i < cellValues.length; i++) {
             int value = cellValues[i];
             if (value >= 1 && value <= 9) {
@@ -196,7 +200,7 @@ public class SudokuGenerator {
         }
         stack[0].sudoku.rebuildInternalData();
         setAllExposedSingles(stack[0].sudoku);
-//        System.out.println("and solve...");
+//        log.debug("and solve...");
 
         // solve it
         solve();
@@ -214,24 +218,24 @@ public class SudokuGenerator {
         solutionCount = 0;
         // first set all Singles exposed by building up the Sudoku grid
         if (DEBUG) {
-            System.out.println("solve start:");
+            log.debug("solve start:");
         }
         if (!setAllExposedSingles(stack[0].sudoku)) {
             // puzzle was invalid all along
             if (DEBUG) {
-                System.out.println("  puzzle was invalid!");
+                log.debug("  puzzle was invalid!");
             }
             return;
         }
 //        setNanos += System.nanoTime() - actSetNanos;
-//        System.out.println("solve: " + getSolutionAsString(stack[0].sudoku.getValues()));
-//        System.out.println("unsolvedCellsAnz = " + stack[0].sudoku.getUnsolvedCellsAnz());
+//        log.debug("solve: " + getSolutionAsString(stack[0].sudoku.getValues()));
+//        log.debug("unsolvedCellsAnz = " + stack[0].sudoku.getUnsolvedCellsAnz());
         if (stack[0].sudoku.getUnsolvedCellsAnz() == 0) {
             // already solved, nothing to do
             solution = Arrays.copyOf(stack[0].sudoku.getValues(), Sudoku2.LENGTH);
             solutionCount++;
             if (DEBUG) {
-                System.out.println("  puzzle was already solved!");
+                log.debug("  puzzle was already solved!");
             }
             return;
         }
@@ -248,7 +252,7 @@ public class SudokuGenerator {
                 } else if (solutionCount > 1) {
                     // but not more than 1000
                     if (DEBUG) {
-                        System.out.println("  puzzle has more than one solution (" + solutionCount + ")!");
+                        log.debug("  puzzle has more than one solution (" + solutionCount + ")!");
                     }
                     return;
                 }
@@ -258,7 +262,7 @@ public class SudokuGenerator {
                 Sudoku2 sudoku = stack[level].sudoku;
                 for (int i = 0; i < Sudoku2.LENGTH; i++) {
 //                    if (sudoku.getCell(i) != 0) {
-//                        System.out.println("cell[" + i + "] = " + Sudoku2.ANZ_VALUES[sudoku.getCell(i)]);
+//                        log.debug("cell[" + i + "] = " + Sudoku2.ANZ_VALUES[sudoku.getCell(i)]);
 //                    }
                     if (sudoku.getCell(i) != 0 && Sudoku2.ANZ_VALUES[sudoku.getCell(i)] < anzCand) {
                         index = i;
@@ -313,17 +317,17 @@ public class SudokuGenerator {
             }
         }
         if (DEBUG) {
-            System.out.println("  puzzle has " + solutionCount + " solution!");
+            log.debug("  puzzle has " + solutionCount + " solution!");
         }
     }
 
     /**
      * Generates a new valid sudoku. If a pattern is set in
-     * {@link Options} and it has already be checked for validity, 
+     * {@link Options} and it has already be checked for validity,
      * it is used automatically.<br><br>
-     * 
+     *
      * This method is used by the {@link BackgroundGenerator}.
-     * 
+     *
      * @param symmetric
      * @return
      */
@@ -336,18 +340,18 @@ public class SudokuGenerator {
         }
         return generateSudoku(symmetric, pattern);
     }
-    
+
     /**
      * Generates a new valid sudoku. If <code>pattern</code> is not <code>null</code>,
      * it is used to determine the positions of the givens. If no sudoku could be generated
-     * (only possible if a <code>pattern</code> is applied), the method returns 
+     * (only possible if a <code>pattern</code> is applied), the method returns
      * <code>null</code>.<br><br>
-     * 
+     *
      * This method is used by the validity checker in the {@link ConfigGeneratorPanel}.
-     * 
+     *
      * @param symmetric
      * @param pattern
-     * @return 
+     * @return
      */
     public Sudoku2 generateSudoku(boolean symmetric, boolean[] pattern) {
         generateFullGrid();
@@ -355,21 +359,21 @@ public class SudokuGenerator {
             generateInitPos(symmetric);
         } else {
             boolean ok = false;
-            System.out.println("Trying with pattern!");
+            log.debug("Trying with pattern!");
             for (int i = 0; i < MAX_TRIES; i++) {
                 if ((ok = generateInitPos(pattern)) == true) {
                     break;
                 }
                 if ((i % 1000) == 0) {
-                    System.out.println("  try: " + i);
+                    log.debug("  try: " + i);
                 }
             }
             if (! ok) {
                 // no puzzle found in MAX_TRIES iterations
-                System.out.println("nothing found!");
+                log.debug("nothing found!");
                 return null;
             }
-            System.out.println("puzzle found!");
+            log.debug("puzzle found!");
         }
         // construct the new sudoku
         Sudoku2 sudoku = new Sudoku2();
@@ -400,7 +404,7 @@ public class SudokuGenerator {
      * Generates a new valid full sudoku grid. Works exactly like the
      * backtracking solver ({@link #solve()}), the cells are set in
      * random order.<br>
-     * The method works very well most of the times, but somtimes 
+     * The method works very well most of the times, but somtimes
      * (about 1.5% of all cases) it can take extremely long to get a
      * solution. It is then better to abort and try with a new randomized
      * index set.
@@ -503,37 +507,37 @@ public class SudokuGenerator {
      * puzzle by deleting the cells indicated by <code>pattern</code>. If the
      * resulting puzzle is invalid, <code>false</code> is returned and the caller
      * is responsible for continuing the search.
-     * 
+     *
      * @param pattern
-     * @return 
+     * @return
      */
     private boolean generateInitPos(boolean[] pattern) {
         // we start with the full board
         System.arraycopy(newFullSudoku, 0, newValidSudoku, 0, newFullSudoku.length);
         // delete all cells indicated by pattern
-//        System.out.println("Full:  " + Arrays.toString(newFullSudoku));
+//        log.debug("Full:  " + Arrays.toString(newFullSudoku));
         for (int i = 0; i < pattern.length; i++) {
             if (pattern[i] == false) {
                 newValidSudoku[i] = 0;
             }
         }
-//        System.out.println("Valid: " + Arrays.toString(newValidSudoku));
+//        log.debug("Valid: " + Arrays.toString(newValidSudoku));
 //        long actNanos = System.nanoTime();
         solve(newValidSudoku);
 //        nanos += System.nanoTime() - actNanos;
         if (solutionCount > 1) {
             return false;
         } else {
-            System.out.println("!!!! FOUND ONE !!!!");
+            log.debug("!!!! FOUND ONE !!!!");
             return true;
         }
     }
-    
+
     /**
      * Takes a full sudoku from {@link #newFullSudoku} and generates a valid
      * puzzle by deleting cells. If a deletion produces a grid with more
      * than one solution it is of course undone.<br><br>
-     * 
+     *
      * @param isSymmetric
      * @param pattern
      */
@@ -616,7 +620,7 @@ public class SudokuGenerator {
                     anzNS++;
                     valid = sudoku.setCell(index, value, false, false);
                     if (DEBUG && ! valid) {
-                        System.out.println("   NS " + index + "/" + value + "/" + valid);
+                        log.debug("   NS " + index + "/" + value + "/" + valid);
                     }
                 }
             }
@@ -629,7 +633,7 @@ public class SudokuGenerator {
                     anzHS++;
                     valid = sudoku.setCell(index, value, false, false);
                     if (DEBUG && ! valid) {
-                        System.out.println("   HS " + index + "/" + value + "/" + valid);
+                        log.debug("   HS " + index + "/" + value + "/" + valid);
                     }
                 }
             }
@@ -667,7 +671,7 @@ public class SudokuGenerator {
     }
 
     public static void main(String[] args) {
-        System.out.println("Sudoku2!");
+        log.debug("Sudoku2!");
 //        ..15............32...............2.9.5...3......7..8..27.....4.3...9.......6..5..
 //        .1.....2....8..6.......3........43....2.1....8......9.4...7.5.3...2...........4..
 //        ...87..3.52.......4..........3.9..7......54...8.......2.....5.....3....9...1.....
@@ -678,23 +682,23 @@ public class SudokuGenerator {
 //        64.7............53.......1.7.86........4.9...5.........6....4......5.2......1....
         SudokuGenerator bs = SudokuGeneratorFactory.getDefaultGeneratorInstance();
 //        bs.solve("..15............32...............2.9.5...3......7..8..27.....4.3...9.......6..5..");
-//        System.out.println(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
+//        log.debug(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
 //        bs.solve(".1.....2....8..6.......3........43....2.1....8......9.4...7.5.3...2...........4..");
-//        System.out.println(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
+//        log.debug(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
 //        bs.solve("...87..3.52.......4..........3.9..7......54...8.......2.....5.....3....9...1.....");
-//        System.out.println(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
+//        log.debug(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
 //        bs.solve(".51..........2.4...........64....2.....5.1..7...3..6..4...3.......8...5.2........");
-//        System.out.println(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
+//        log.debug(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
 //        bs.solve("17.....4....62....5...3....84....1.....3....6......9....6.....3.....1..........5.");
-//        System.out.println(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
+//        log.debug(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
 //        bs.solve("...7...1...6.......4.......7..5.1.....8...4..2...........24.6...3..8....1.......9");
-//        System.out.println(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
+//        log.debug(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
 //        bs.solve("3.....7.....1..4.....2.........5.61..82...........6....1.....287...3...........3.");
-//        System.out.println(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
+//        log.debug(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
 //        bs.solve("64.7............53.......1.7.86........4.9...5.........6....4......5.2......1....");
-//        System.out.println(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
+//        log.debug(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
         //bs.solve("1..2..3...2.1.........3...1....1.2.3..1...4....2.4...........1.2.........1.......");
-        //System.out.println(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
+        //log.debug(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
 
         int anzRuns = 10000;
         long ticks = System.currentTimeMillis();
@@ -722,26 +726,26 @@ public class SudokuGenerator {
             //bs.solve("7..4......5....3........1..368..........2..5....7........5...7213...8...6........");
         }
         ticks = System.currentTimeMillis() - ticks;
-        System.out.println(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
-        System.out.println("Time: " + ((double) ticks / anzRuns) + "ms");
-        System.out.println(bs.printStat());
+        log.debug(bs.getSolutionAsString() + " (" + bs.getSolutionCount() + ")");
+        log.debug("Time: " + ((double) ticks / anzRuns) + "ms");
+        log.debug(bs.printStat());
 
         ticks = System.currentTimeMillis();
         for (int i = 0; i < anzRuns; i++) {
             Sudoku2 sudoku = bs.generateSudoku(true);
 //            bs.generateFullGrid();
-//            System.out.println("New Grid1: " + bs.getSolutionAsString(bs.newFullSudoku));
-//            System.out.println("New Grid2: " + bs.getSolutionAsString(bs.newValidSudoku));
-//            System.out.println("New Grid3: " + sudoku.getSudoku(ClipboardMode.CLUES_ONLY));
-//            System.out.println("New Grid4: " + sudoku.getSudoku(ClipboardMode.VALUES_ONLY));
+//            log.debug("New Grid1: " + bs.getSolutionAsString(bs.newFullSudoku));
+//            log.debug("New Grid2: " + bs.getSolutionAsString(bs.newValidSudoku));
+//            log.debug("New Grid3: " + sudoku.getSudoku(ClipboardMode.CLUES_ONLY));
+//            log.debug("New Grid4: " + sudoku.getSudoku(ClipboardMode.VALUES_ONLY));
         }
         ticks = System.currentTimeMillis() - ticks;
-        //System.out.println("New Grid: " + bs.getSolutionAsString(bs.newFullSudoku));
+        //log.debug("New Grid: " + bs.getSolutionAsString(bs.newFullSudoku));
         long faktor = 1000000;
         long nanos = bs.nanos / faktor;
         long setNanos = bs.setNanos / faktor;
-        System.out.println("Time: " + ((double) ticks / anzRuns) + "ms " + (bs.anzTriesGen / anzRuns) + "/" + (bs.anzClues / anzRuns) + "/" + 
+        log.debug("Time: " + ((double) ticks / anzRuns) + "ms " + (bs.anzTriesGen / anzRuns) + "/" + (bs.anzClues / anzRuns) + "/" +
                 nanos + "/" + setNanos + "/" + (nanos - setNanos));
-        System.out.println(bs.printStat());
+        log.debug(bs.printStat());
     }
 }
