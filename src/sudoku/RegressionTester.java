@@ -28,12 +28,13 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import solver.SudokuSolverFactory;
 import solver.SudokuStepFinder;
 
 /**
  * A class that implements a Regression Tester for HoDoKu
- * 
+ *
  * Changes 20090910:
  *   - call specialised solvers for performance reasons
  *   - report unknown techniques
@@ -144,7 +145,7 @@ public class RegressionTester {
      *
      * Now search for all occurences of that technique in the grid and
      * compare the results.
-     * 
+     *
      * @param testCase test case sudoku in library format
      */
     public void test(String testCase) {
@@ -640,7 +641,7 @@ public class RegressionTester {
      *
      * With chains more than one chain with different chain lengths may exist. This
      * has to be tested separately.
-     * 
+     *
      * @param testCase
      * @param steps
      * @param sudoku
@@ -720,6 +721,6 @@ public class RegressionTester {
         RegressionTester tester = new RegressionTester();
 //        boolean result = tester.test(":0100:3:.....4..9.49....2.172..9..5......8..3...7...6..5......4..5..698.9....7..6..39....::315 317 318:");
 //        System.out.println("Result: " + result);
-        tester.runTest("lib02.txt");
+        tester.runTest("reglib-1.4.txt");
     }
 }
