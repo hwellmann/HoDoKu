@@ -18,9 +18,6 @@
  */
 package sudoku;
 
-import generator.BackgroundGeneratorThread;
-import generator.SudokuGenerator;
-import generator.SudokuGeneratorFactory;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -47,6 +44,12 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
+import generator.BackgroundGeneratorThread;
+import generator.SudokuGenerator;
+import generator.SudokuGeneratorFactory;
 import solver.SudokuSolver;
 import solver.SudokuSolverFactory;
 
@@ -303,9 +306,12 @@ public class Main {
 
     /**
      * @param args the command line arguments
-     * @throws IOException  
+     * @throws IOException
      */
     public static void main(String[] args) throws IOException {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
         // Logging: Standardmäßig auf die Console, ins Logfile nur Exceptions
         Handler fh = new FileHandler("%t/hodoku.log", false);
         fh.setFormatter(new SimpleFormatter());
@@ -332,6 +338,7 @@ public class Main {
         //Logger.getLogger(TablingSolver.class.getName()).setLevel(Level.FINER);
         loggers.add(logger = Logger.getLogger(SudokuSolver.class.getName()));
         //logger.setLevel(Level.FINER);
+
 
         Logger.getLogger(Main.class.getName()).log(Level.CONFIG, "java.io.tmpdir={0}", System.getProperty("java.io.tmpdir"));
         Logger.getLogger(Main.class.getName()).log(Level.CONFIG, "user.dir={0}", System.getProperty("user.dir"));
@@ -875,7 +882,7 @@ public class Main {
     }
 
     /**
-     * Dynamically loads the Nimbus LaF and resets the default font to a 
+     * Dynamically loads the Nimbus LaF and resets the default font to a
      * larger size. This is necessary for two reasons:
      * <ul>
      * <li>The Nimbus LaF is initialized dynamically, so setting it in
@@ -889,7 +896,7 @@ public class Main {
      * @param fontName
      * @param fontStyle
      * @param fontSize
-     * @return 
+     * @return
      */
 //    private static boolean initializeNimbusLaF(String className, String fontName, int fontStyle, int fontSize) {
 //        ClassLoader classLoader = Main.class.getClassLoader();
@@ -930,11 +937,11 @@ public class Main {
     /**
      * Parses a command line string that comes from a file or from stdin.
      * This used to be a String.split(" "), but we have to support text qualifiers.
-     * 
+     *
      * Allowed qualifiers: " or '
-     * 
+     *
      * Qualifiers within the string have to be doubled
-     * 
+     *
      * @param in The command line string
      * @return Array with options
      */

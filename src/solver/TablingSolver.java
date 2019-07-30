@@ -27,6 +27,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.slf4j.LoggerFactory;
+
 import sudoku.Candidate;
 import sudoku.Chain;
 import sudoku.Options;
@@ -58,40 +61,40 @@ import sudoku.SudokuSetBase;
  *
  * Some tests currently implemented (every table holds an array with sets for
  * all cells than can be set to a certain candidate - onSets - and with set for
- * cells, where that candidate can be eliminated - offSets): 
- * <ol> 
+ * cells, where that candidate can be eliminated - offSets):
+ * <ol>
  *      <li>only one chain:
- *      <ul> 
+ *      <ul>
  *          <li>two values set in the same cell (AND onSets) -> premise
- *              was wrong </li> 
+ *              was wrong </li>
  *          <li>same value set twice in one house -> premise was
  *              wrong</li>
  *          <li>all candidates deleted from a cell -> premise was wrong</li>
  *          <li>candidate can be set in and deleted from a cell simultaneously ->
- *              premise was wrong</li> 
+ *              premise was wrong</li>
  *          <li>all candidates are deleted from a house -> premise
  *              was wrong</li>
- *      </ul></li> 
+ *      </ul></li>
  *      <li>two chains for the same start candidate
  *          (candidate set and deleted):
- *      <ul> 
+ *      <ul>
  *          <li>both chains lead to the same value in
- *              onSets -> value can be set</li> 
+ *              onSets -> value can be set</li>
  *          <li>both chains lead to the same value in
  *              offSets -> candidate can be deleted</li>
- *      </ul></li> 
+ *      </ul></li>
  *      <li>chains for all
  *          candidates in one house/cell set:
- *      <ul> 
+ *      <ul>
  *          <li>all chains lead to the same value
- *              in onSets -> value can be set</li> 
+ *              in onSets -> value can be set</li>
  *          <li>all chains lead to the same value in
  *              offSets -> candidate can be deleted</li>
- *      </ul></li> 
+ *      </ul></li>
  * </ol>
  *
- * 20081013: AIC added (combined with Nice Loops)<br><br> 
- * 
+ * 20081013: AIC added (combined with Nice Loops)<br><br>
+ *
  * For every Nice Loop
  * that starts with a strong inference out of the start cell and ends with a
  * weak inference into the start cell the AIC (start cell - last strong
@@ -99,17 +102,19 @@ import sudoku.SudokuSetBase;
  * AIC instead of as Nice Loop. The check is done for discontinuous loops
  * only.<br><br>
  *
- * AIC eliminations: 
- * <ul> 
+ * AIC eliminations:
+ * <ul>
  *      <li>if the candidates of the endpoints are equal, all
- *          candidates can be eliminated that see both endpoints</li> 
- *      <li>if the candidates are not equal, cand A can be eliminated in 
- *          cell b and vice versa</li> 
+ *          candidates can be eliminated that see both endpoints</li>
+ *      <li>if the candidates are not equal, cand A can be eliminated in
+ *          cell b and vice versa</li>
  * </ul>
  *
  * @author hobiwan
  */
 public class TablingSolver extends AbstractSolver {
+
+    public static org.slf4j.Logger log = LoggerFactory.getLogger(TablingSolver.class);
 
     public int doDebugCounter = 0;
     private static final long CLEANUP_INTERVAL = 5 * 60 * 1000;
@@ -264,7 +269,7 @@ public class TablingSolver extends AbstractSolver {
      */
     private List<Als> alses = null;
     /**
-     * All cells with eliminations for an als using a specificentry candidate, 
+     * All cells with eliminations for an als using a specificentry candidate,
      * sorted by candidate
      */
     private SudokuSet[] alsEliminations = new SudokuSet[10];
@@ -527,7 +532,7 @@ public class TablingSolver extends AbstractSolver {
         Collections.sort(this.steps);
         ticks = System.currentTimeMillis() - ticks;
         if (DEBUG) {
-            System.out.println("getAllNiceLoops() gesamt: " + ticks + "ms");
+            log.debug("getAllNiceLoops() gesamt: " + ticks + "ms");
         }
         return steps;
     }
@@ -551,7 +556,7 @@ public class TablingSolver extends AbstractSolver {
         Collections.sort(this.steps);
         ticks = System.currentTimeMillis() - ticks;
         if (DEBUG) {
-            System.out.println("getAllGroupedNiceLoops() gesamt: " + ticks + "ms");
+            log.debug("getAllGroupedNiceLoops() gesamt: " + ticks + "ms");
         }
         return steps;
     }
@@ -573,7 +578,7 @@ public class TablingSolver extends AbstractSolver {
         Collections.sort(steps, tablingComparator);
         millis1 = System.currentTimeMillis() - millis1;
         if (DEBUG) {
-            System.out.println("getAllForcingChains() gesamt: " + millis1 + "ms");
+            log.debug("getAllForcingChains() gesamt: " + millis1 + "ms");
         }
         List<SolutionStep> result = steps;
         steps = oldSteps;
@@ -598,7 +603,7 @@ public class TablingSolver extends AbstractSolver {
         Collections.sort(steps, tablingComparator);
         millis1 = System.currentTimeMillis() - millis1;
         if (DEBUG) {
-            System.out.println("getAllForcingNets() gesamt: " + millis1 + "ms");
+            log.debug("getAllForcingNets() gesamt: " + millis1 + "ms");
         }
         List<SolutionStep> result = steps;
         steps = oldSteps;
@@ -627,7 +632,7 @@ public class TablingSolver extends AbstractSolver {
         }
         ticks = System.currentTimeMillis() - ticks;
         if (DEBUG) {
-            System.out.println("fillTables(): " + ticks + "ms");
+            log.debug("fillTables(): " + ticks + "ms");
         }
         printTableAnz();
         //printTable("r1c6=6 fill", onTable[56]);
@@ -638,7 +643,7 @@ public class TablingSolver extends AbstractSolver {
         expandTables();
         ticks = System.currentTimeMillis() - ticks;
         if (DEBUG) {
-            System.out.println("expandTables(): " + ticks + "ms");
+            log.debug("expandTables(): " + ticks + "ms");
         }
         printTableAnz();
         //printTable("r1c6=6 expand", onTable[56]);
@@ -755,7 +760,7 @@ public class TablingSolver extends AbstractSolver {
         }
         ticks = System.currentTimeMillis() - ticks;
         if (DEBUG) {
-            System.out.println("fillTables(): " + ticks + "ms");
+            log.debug("fillTables(): " + ticks + "ms");
         }
         printTableAnz();
         //printTable("r5c6=2 fill", onTable[412]);
@@ -766,7 +771,7 @@ public class TablingSolver extends AbstractSolver {
         expandTables();
         ticks = System.currentTimeMillis() - ticks;
         if (DEBUG) {
-            System.out.println("expandTables(): " + ticks + "ms");
+            log.debug("expandTables(): " + ticks + "ms");
         }
         printTableAnz();
         //printTable("r5c6=2 expand", onTable[412]);
@@ -779,7 +784,7 @@ public class TablingSolver extends AbstractSolver {
         checkAics(offTable);
         ticks = System.currentTimeMillis() - ticks;
         if (DEBUG) {
-            System.out.println("checkNiceLoops(): " + ticks + "ms");
+            log.debug("checkNiceLoops(): " + ticks + "ms");
         }
     }
 
@@ -800,7 +805,7 @@ public class TablingSolver extends AbstractSolver {
         }
         nanos = System.nanoTime() - nanos;
         if (DEBUG) {
-            System.out.println("fillTables(): " + (nanos / 1000000l) + "ms");
+            log.debug("fillTables(): " + (nanos / 1000000l) + "ms");
             //printTables("after fillTables()");
             //printTable("after fillTables() r4c3=5", onTable[285]);
         }
@@ -816,7 +821,7 @@ public class TablingSolver extends AbstractSolver {
         expandTables();
         nanos = System.nanoTime() - nanos;
         if (DEBUG) {
-            System.out.println("expandTables(): " + (nanos / 1000000l) + "ms");
+            log.debug("expandTables(): " + (nanos / 1000000l) + "ms");
             //printTables("after expandTables()");
             //printTable("r7c1=8 expand", onTable[548], alses);
             //printTable("r3c8=7 expand", onTable[257], alses);
@@ -833,17 +838,17 @@ public class TablingSolver extends AbstractSolver {
             checkForcingChains();
             nanos = System.nanoTime() - nanos;
             if (DEBUG) {
-                System.out.println("checkChainsFC(): " + (nanos / 1000000l) + "ms");
+                log.debug("checkChainsFC(): " + (nanos / 1000000l) + "ms");
             }
         } else {
             // now nets
             // try new net nodes
-//            System.out.println("======== CREATE NET1 =========");
+//            log.debug("======== CREATE NET1 =========");
             nanos = System.nanoTime();
             createAllNets();
             nanos = System.nanoTime() - nanos;
             if (DEBUG) {
-                System.out.println("createAllNets(): " + (nanos / 1000000l) + "ms");
+                log.debug("createAllNets(): " + (nanos / 1000000l) + "ms");
                 //printTable("after createNets() r4c3=5", onTable[285]);
                 //printTable("r7c1=8 nets", onTable[548], alses);
                 //printTable("r3c8=7 nets", onTable[257], alses);
@@ -857,7 +862,7 @@ public class TablingSolver extends AbstractSolver {
             checkForcingChains();
             nanos = System.nanoTime() - nanos;
             if (DEBUG) {
-                System.out.println("checkChainsFN(): " + (nanos / 1000000l) + "ms");
+                log.debug("checkChainsFN(): " + (nanos / 1000000l) + "ms");
             }
 
             //TODO: DEBUG
@@ -876,13 +881,13 @@ public class TablingSolver extends AbstractSolver {
         if (DEBUG) {
 //            for (SolutionStep step : steps) {
 //                if (step.getCandidatesToDelete().get(0).getIndex() == 3 && step.getCandidatesToDelete().get(0).getValue() == 5) {
-//                    System.out.println("==================================");
-//                    System.out.println("   " + step.toString(2));
+//                    log.debug("==================================");
+//                    log.debug("   " + step.toString(2));
 //                    List<Chain> chains = step.getChains();
 //                    for (Chain debugChain : chains) {
-//                        System.out.println("   chain: " + debugChain);
+//                        log.debug("   chain: " + debugChain);
 //                    }
-//                    System.out.println("==================================");
+//                    log.debug("==================================");
 //                }
 //            }
         }
@@ -995,7 +1000,7 @@ public class TablingSolver extends AbstractSolver {
                 // found a verity -> cell(s) can be set
                 for (int k = 0; k < tmpOnSets[j].size(); k++) {
                     if (DEBUG && k > 0) {
-                        //System.out.println("More than one chain/net found 1");
+                        //log.debug("More than one chain/net found 1");
                     }
                     globalStep.reset();
                     globalStep.setType(SolutionType.FORCING_CHAIN_VERITY);
@@ -1012,7 +1017,7 @@ public class TablingSolver extends AbstractSolver {
                 // found a verity -> candidate(s) can be deleted
                 for (int k = 0; k < tmpOffSets[j].size(); k++) {
                     if (DEBUG && k > 0) {
-                        //System.out.println("More than one chain/net found 2");
+                        //log.debug("More than one chain/net found 2");
                     }
                     globalStep.reset();
                     globalStep.setType(SolutionType.FORCING_CHAIN_VERITY);
@@ -1185,7 +1190,7 @@ public class TablingSolver extends AbstractSolver {
         }
         // adjust the ALS nodes
         adjustChains(globalStep);
-//        System.out.println("replaceorcopystep: " + globalStep.toString(2));
+//        log.debug("replaceorcopystep: " + globalStep.toString(2));
 
         // all steps use the same chains -> they have to be cloned
         List<Chain> oldChains = globalStep.getChains();
@@ -1245,7 +1250,7 @@ public class TablingSolver extends AbstractSolver {
     }
 
     /**
-     * <code>on</code> and <code>off</code> lead to the same conclusion. 
+     * <code>on</code> and <code>off</code> lead to the same conclusion.
      * This is a verity and the
      * conclusion has to be always true.<br><br>
      *
@@ -1330,13 +1335,13 @@ public class TablingSolver extends AbstractSolver {
             return;
         }
         if (DEBUG) {
-            System.out.println("checkOneChain(): " + Chain.toString(entry.entries[0]));
+            log.debug("checkOneChain(): " + Chain.toString(entry.entries[0]));
         }
         // chain contains the invers of the assumption -> assumption is false
         if ((entry.isStrong(0) && entry.offSets[entry.getCandidate(0)].contains(entry.getCellIndex(0)))
                 || (!entry.isStrong(0) && entry.onSets[entry.getCandidate(0)].contains(entry.getCellIndex(0)))) {
             if (DEBUG) {
-//                System.out.println("  1");
+//                log.debug("  1");
             }
             globalStep.reset();
             globalStep.setType(SolutionType.FORCING_CHAIN_CONTRADICTION);
@@ -1355,7 +1360,7 @@ public class TablingSolver extends AbstractSolver {
         // same candidate set in and deleted from a cell -> assumption is false
         for (int i = 0; i < entry.onSets.length; i++) {
             if (DEBUG) {
-//                System.out.println("  2");
+//                log.debug("  2");
             }
             // check all candidates
             tmpSet.set(entry.onSets[i]);
@@ -1381,7 +1386,7 @@ public class TablingSolver extends AbstractSolver {
         for (int i = 1; i < entry.onSets.length; i++) {
             for (int j = i + 1; j < entry.onSets.length; j++) {
                 if (DEBUG) {
-//                    System.out.println("  3");
+//                    log.debug("  3");
                 }
                 tmpSet.set(entry.onSets[i]);
                 tmpSet.and(entry.onSets[j]);
@@ -1405,15 +1410,15 @@ public class TablingSolver extends AbstractSolver {
         }
         // one value set twice in one house
         if (DEBUG) {
-//            System.out.println("  4");
+//            log.debug("  4");
         }
         checkHouseSet(entry, Sudoku2.LINE_TEMPLATES, Sudoku2.LINE);
         if (DEBUG) {
-//            System.out.println("  5");
+//            log.debug("  5");
         }
         checkHouseSet(entry, Sudoku2.COL_TEMPLATES, Sudoku2.COL);
         if (DEBUG) {
-//            System.out.println("  6");
+//            log.debug("  6");
         }
         checkHouseSet(entry, Sudoku2.BLOCK_TEMPLATES, Sudoku2.BLOCK);
 
@@ -1476,11 +1481,11 @@ public class TablingSolver extends AbstractSolver {
 
     /**
      * Check, if all instances of a candidate are deleted from one house. If so,
-     * the assumption was invalid: 
-     * 
-     * <ul> 
+     * the assumption was invalid:
+     *
+     * <ul>
      *      <li>Get all instances of the candidate
-     *          in the house</li> 
+     *          in the house</li>
      *      <li>If there are candidates and the set equals the
      *          offSet, step was found</li>
      * </ul>
@@ -1580,12 +1585,12 @@ public class TablingSolver extends AbstractSolver {
     }
 
     /**
-     * AICs are checked separately: The end of the chain has to be: 
-     * 
+     * AICs are checked separately: The end of the chain has to be:
+     *
      * <ul>
      *      <li>on-entry for the same candidate as the start cell (Type 1), if the
      *          combined buddies of start and end cell can eliminate more than one
-     *          candidate</li> 
+     *          candidate</li>
      *      <li>on-entry for a different candidate if the end cell
      *          sees the start cell and if the start cell contains a candidate of the
      *          chain end and the end cell contains a candidate of the chain
@@ -1636,43 +1641,43 @@ public class TablingSolver extends AbstractSolver {
      * If the first and the last cell of the chain are identical, the
      * chain is a Nice Loop.<br><br>
      *
-     * Discontinuous Nice Loop: 
-     * 
-     * <dl> 
+     * Discontinuous Nice Loop:
+     *
+     * <dl>
      *  <dt>First and last link are weak for the
-     *      same candidate:</dt> 
+     *      same candidate:</dt>
      *  <dd>Candidate can be eliminated from the start
-     *      cell</dd> 
+     *      cell</dd>
      *  <dt>First and last link are strong for the same candidate:</dt>
      *  <dd>Candidate can be set in the start cell (in the step all other
      *      candidates are eliminated from the cell, leads to a naked single)</dd>
      *  <dt>One link is weak and the other strong, they are for different
-     *      candidates:</dt> 
+     *      candidates:</dt>
      *  <dd>The candidate from the weak link can be eliminated
-     *      from the start cell</dd> 
+     *      from the start cell</dd>
      * </dl>
      *
-     * Continuous Nice Loop: 
-     * 
-     * <dl> 
-     *  <dt>Two weak links:</dt> 
-     *  <dd>First cell must be bivalue, candidates must be different</dd> 
+     * Continuous Nice Loop:
+     *
+     * <dl>
+     *  <dt>Two weak links:</dt>
+     *  <dd>First cell must be bivalue, candidates must be different</dd>
      *  <dt>Two strong links:</dt>
-     *  <dd>Candidates must be different</dd> 
-     *  <dt>One link strong, the other weak:</dt> 
-     *  <dd>Both links must be for the same candidate</dd> 
+     *  <dd>Candidates must be different</dd>
+     *  <dt>One link strong, the other weak:</dt>
+     *  <dd>Both links must be for the same candidate</dd>
      * </dl>
      *
      * If a Continuous Nice Loop is present, the following eliminations are
-     * possible: 
-     * 
-     * <dl> 
+     * possible:
+     *
+     * <dl>
      *  <dt>One cell reached and left with a strong link:</dt>
      *  <dd>All candidates not present in the strong links can be eliminated from
-     *      the cell</dd> 
-     *  <dt>Weak link between cells:</dt> 
-     *  <dd>Link candidate can be eliminated from all cells, that see both cells 
-     *      of the link</dd> 
+     *      the cell</dd>
+     *  <dt>Weak link between cells:</dt>
+     *  <dd>Link candidate can be eliminated from all cells, that see both cells
+     *      of the link</dd>
      * </dl>
      *
      * Chains are created backwards. We cant be sure, if the first link really
@@ -1680,8 +1685,8 @@ public class TablingSolver extends AbstractSolver {
      * which first link remains in the start cell, are ignored.
      *
      * @param entry TableEntry of the start link
-     * @param entryIndex Index of the second to last link in the chain 
-     *      (the last link links back to the start cell and is not present 
+     * @param entryIndex Index of the second to last link in the chain
+     *      (the last link links back to the start cell and is not present
      *      in the table)
      */
     private void checkNiceLoop(TableEntry entry, int entryIndex) {
@@ -1689,13 +1694,13 @@ public class TablingSolver extends AbstractSolver {
         if (entry.getDistance(entryIndex) <= 2) {
             // Chain too short -> no eliminations possible
             if (DEBUG) {
-//                System.out.println("Chain too short: " + printTableEntry(entry.entries[0], alses) + "/"
+//                log.debug("Chain too short: " + printTableEntry(entry.entries[0], alses) + "/"
 //                        + printTableEntry(entry.entries[entryIndex], alses) + "/" + entry.getDistance(entryIndex));
             }
             return;
         }
         if (DEBUG) {
-//            System.out.println("Longer chain found");
+//            log.debug("Longer chain found");
         }
 
         // check loop type
@@ -1707,7 +1712,7 @@ public class TablingSolver extends AbstractSolver {
         if (globalStep.getChains().isEmpty()) {
             // invalid chain -> builds a lasso somewhere -> ignore it!
             if (DEBUG) {
-//                System.out.println("Chain is a lasso -> ignored");
+//                log.debug("Chain is a lasso -> ignored");
             }
             return;
         }
@@ -1812,7 +1817,7 @@ public class TablingSolver extends AbstractSolver {
                 if ((i > 0) && (!Chain.isSStrong(nlChain[i]) && Chain.getSCellIndex(nlChain[i - 1]) != Chain.getSCellIndex(nlChain[i]))) {
                     // weak link between cells
                     // CAUTION:  If one of the cells is entry point for an ALS, nothing can be eliminated;
-                    //           if one or both cells are group nodes, only candidates, that see all of the 
+                    //           if one or both cells are group nodes, only candidates, that see all of the
                     //           group node cells, can be eliminated
                     // 20090224: entries to ALS can be treated like normal group nodes: all candidates in the
                     //           same house that dont belong to the node or the ALS can be eliminated
@@ -1992,7 +1997,7 @@ public class TablingSolver extends AbstractSolver {
         if (globalStep.getChains().isEmpty()) {
             // something is wrong with that chain
             if (DEBUG) {
-//                System.out.println("checkAIC(): Found eliminations, but no suitable chain!");
+//                log.debug("checkAIC(): Found eliminations, but no suitable chain!");
             }
             return;
         }
@@ -2131,7 +2136,7 @@ public class TablingSolver extends AbstractSolver {
             // candidate and record all dependencies (look ahead more than one iteration).
             // one copy is enough, Sudoku2.set() copies the contents of the sudoku
             if (DEBUG) {
-                System.out.println("BEGIN fillTables()");
+                log.debug("BEGIN fillTables()");
             }
             savedSudoku = sudoku.clone();
             simpleFinder.setSudoku(savedSudoku);
@@ -2160,7 +2165,7 @@ public class TablingSolver extends AbstractSolver {
             }
             sudoku.set(savedSudoku);
             if (DEBUG) {
-                System.out.println("END fillTables()");
+                log.debug("END fillTables()");
             }
         }
     }
@@ -2169,47 +2174,47 @@ public class TablingSolver extends AbstractSolver {
      * Fills {@link #extendedTable } with all group nodes. Group nodes are
      * always handled as chains - only direct implications are stored.<br><br>
      *
-     * Collect all group nodes. For every group node do: 
-     * 
-     * <ul> 
-     *  <li>make a table for every group node (on and off);</li> 
-     *  <li>write the index in extendedTable into extendedTableMap 
-     *      (together with the group node entry)</li> 
+     * Collect all group nodes. For every group node do:
+     *
+     * <ul>
+     *  <li>make a table for every group node (on and off);</li>
+     *  <li>write the index in extendedTable into extendedTableMap
+     *      (together with the group node entry)</li>
      *  <li>
-     *  <dl> 
-     *      <dt>for ON entries:</dt> 
-     *      <dd>every candidate that can see all group node cells is turned OFF; 
-     *          every other group node that can see (and doesnt overlap) the 
+     *  <dl>
+     *      <dt>for ON entries:</dt>
+     *      <dd>every candidate that can see all group node cells is turned OFF;
+     *          every other group node that can see (and doesnt overlap) the
      *          actual group node is turned OFF</dd>
-     *      <dt>for OFF entries:</dt> 
+     *      <dt>for OFF entries:</dt>
      *      <dd>if a single candidate in one of the houses
      *          of the group node exists, it is turned ON; if only one other
-     *          non-overlapping group node (without extra non-group nodes) 
-     *          exists in one of the houses, it is turned ON</dd> 
-     *  </dl></li> 
-     * </ul> 
-     * 
-     * Links to the group nodes have to be added in normal tables, that trigger 
-     * the group node: 
-     * 
+     *          non-overlapping group node (without extra non-group nodes)
+     *          exists in one of the houses, it is turned ON</dd>
+     *  </dl></li>
+     * </ul>
+     *
+     * Links to the group nodes have to be added in normal tables, that trigger
+     * the group node:
+     *
      * <ul>
-     *  <li>    
-     *  <dl> 
-     *      <dt>for ON entries:</dt> 
-     *      <dd>if only one additional candidate exists in one of the houses, 
-     *          the entry is added to that candidate's offTable</dd> 
-     *      <dt>for OFF entries:</dt> 
-     *      <dd>the entry is added to the onTable of every candidate, that 
-     *          sees the group node</dd> 
-     *     
-     *  </dl></li> 
+     *  <li>
+     *  <dl>
+     *      <dt>for ON entries:</dt>
+     *      <dd>if only one additional candidate exists in one of the houses,
+     *          the entry is added to that candidate's offTable</dd>
+     *      <dt>for OFF entries:</dt>
+     *      <dd>the entry is added to the onTable of every candidate, that
+     *          sees the group node</dd>
+     *
+     *  </dl></li>
      * </ul>
      *
      * <b>CAUTION:</b> Must be called AFTER {@link #fillTables() } or the
      * attributes {@link #extendedTableMap } and {@link #extendedTableIndex }
      * will not be properly initialized; the initialization cannot be moved
-     * here, because it must be possible to call 
-     * {@link #fillTablesWithGroupNodes()} and {@link #fillTablesWithAls() } 
+     * here, because it must be possible to call
+     * {@link #fillTablesWithGroupNodes()} and {@link #fillTablesWithAls() }
      * in arbitrary order.
      */
     private void fillTablesWithGroupNodes() {
@@ -2224,7 +2229,7 @@ public class TablingSolver extends AbstractSolver {
             extendedTableMap.put(onEntry.entries[0], extendedTableIndex);
             extendedTableIndex++;
             if (DEBUG) {
-                //System.out.println("GN: " + Chain.toString(onEntry.entries[0]) + "(" + (extendedTableIndex - 1) + "/" + onEntry.entries[0] + ")");
+                //log.debug("GN: " + Chain.toString(onEntry.entries[0]) + "(" + (extendedTableIndex - 1) + "/" + onEntry.entries[0] + ")");
             }
             // and one for OFF
             TableEntry offEntry = getNextExtendedTableEntry(extendedTableIndex);
@@ -2232,7 +2237,7 @@ public class TablingSolver extends AbstractSolver {
             extendedTableMap.put(offEntry.entries[0], extendedTableIndex);
             extendedTableIndex++;
             if (DEBUG) {
-                //System.out.println("GN: " + Chain.toString(offEntry.entries[0]) + "(" + (extendedTableIndex - 1) + "/" + offEntry.entries[0] + ")");
+                //log.debug("GN: " + Chain.toString(offEntry.entries[0]) + "(" + (extendedTableIndex - 1) + "/" + offEntry.entries[0] + ")");
             }
 
             // ok: collect candidates that can see the group node
@@ -2378,33 +2383,33 @@ public class TablingSolver extends AbstractSolver {
      * handle). Eliminations caused by locked sets can trigger other
      * ALSes.<br><br>
      *
-     * For every ALS do: 
-     * 
-     * <ul> 
-     *  <li>check all possible entries; if an entry provides eliminations or 
-     *      forces cells, make a table for that entry (only off)</li> 
-     *  <li>write the index in {@link #extendedTable } into 
-     *      {@link #extendedTableMap} (together with the ALS entry)</li> 
-     *  <li>add the ALS entry to the onTable of the candidate/group node/als 
-     *      that provides the entry</li> 
-     *  <li>every candidate/group node deleted by the resulting locked set is 
-     *      added to the ALS's table as is every newly triggered ALS</li> 
+     * For every ALS do:
+     *
+     * <ul>
+     *  <li>check all possible entries; if an entry provides eliminations or
+     *      forces cells, make a table for that entry (only off)</li>
+     *  <li>write the index in {@link #extendedTable } into
+     *      {@link #extendedTableMap} (together with the ALS entry)</li>
+     *  <li>add the ALS entry to the onTable of the candidate/group node/als
+     *      that provides the entry</li>
+     *  <li>every candidate/group node deleted by the resulting locked set is
+     *      added to the ALS's table as is every newly triggered ALS</li>
      * </ul>
      *
      * The ALS entry has the index of the first candidate that provides the
      * entry set as index1, the index in the ALS-array set as index2.<br><br>
      *
-     * More detailed: for every ALS do 
-     * 
-     * <ul> 
-     *  <li>for every candidate (or group of candidates) of the als find all 
-     *      remaining buddies in the grid: they are all valid entries</li> 
-     *  <li>if one of the entries from above is a member of a group node, that 
-     *      doesn't overlap the als, the group node is an additional entry</li> 
+     * More detailed: for every ALS do
+     *
+     * <ul>
+     *  <li>for every candidate (or group of candidates) of the als find all
+     *      remaining buddies in the grid: they are all valid entries</li>
+     *  <li>if one of the entries from above is a member of a group node, that
+     *      doesn't overlap the als, the group node is an additional entry</li>
      *  <li>if the remaining locked set provides eliminations, record
      *      them and check for possible forcings; note that the eliminations could
      *      provide an entry for another als (think of them as resctricd common);
-     *      also, the eliminations could form a group node</li> 
+     *      also, the eliminations could form a group node</li>
      * </ul>
      *
      * <b>20090220:</b> BUG - alsBuddies contains only cells, that can see all
@@ -2415,7 +2420,7 @@ public class TablingSolver extends AbstractSolver {
      * <b>CAUTION:</b> Must be called AFTER {@link #fillTables() } or the
      * attributes {@link #extendedTableMap } and {@link #extendedTableIndex }
      * will not be properly initialized; the initialization cannot be moved
-     * here, because it must be possible to call {@link #fillTablesWithGroupNodes()} 
+     * here, because it must be possible to call {@link #fillTablesWithGroupNodes()}
      * and {@link #fillTablesWithAls() } in arbitrary order.
      */
     private void fillTablesWithAls() {
@@ -2431,7 +2436,7 @@ public class TablingSolver extends AbstractSolver {
             // for every possible entry candidate find all remaining candidates in the grid
             for (int entryCand = 1; entryCand <= 9; entryCand++) {
                 // first check, if there are possible eliminations (nothing to do if not):
-                // for all other candidates get all cells, that contain that 
+                // for all other candidates get all cells, that contain that
                 // candidate and can see all cells of the ALS;
                 // any such candidate can be eliminated
                 // 20090220: a candidiate doesnt have to see all cells of the ALS, only the cells
@@ -2470,7 +2475,7 @@ public class TablingSolver extends AbstractSolver {
                     // nothing to do -> next candidate
                     continue;
                 }
-                // Eliminations are possible and possible entries exist, 
+                // Eliminations are possible and possible entries exist,
                 // create a table for the als with that entry
                 int entryIndex = als.indicesPerCandidat[entryCand].get(0);
                 TableEntry alsEntry;
@@ -2497,7 +2502,7 @@ public class TablingSolver extends AbstractSolver {
                         // wrong candidate -> nothing to do
                         continue;
                     }
-                    // tmpSet contains all remaining buddies of the ALS; two of 
+                    // tmpSet contains all remaining buddies of the ALS; two of
                     // them have to be in the group node too
                     tmpSet1.setAnd(tmpSet, gAct.indices);
                     if (tmpSet1.isEmpty() || tmpSet1.size() < 2) {
@@ -2665,12 +2670,12 @@ public class TablingSolver extends AbstractSolver {
      * candidates in the {@link #finder} are not updated (they are not used and
      * after the operation the sudoku has not changed).<br><br>
      *
-     * If <code>set</code> is <code>true</code>, the cell is set and all newly 
+     * If <code>set</code> is <code>true</code>, the cell is set and all newly
      * created Hidden and Naked Singles are collected and executed. If it is
      * <code>false</code>, it is eliminated. If that creates single(s), they are
      * executed and handled as well.<br><br>
      *
-     * If a cell is set, this is delegated to 
+     * If a cell is set, this is delegated to
      * {@link #setCell(int, int, solver.TableEntry, boolean, boolean, int)}.
      *
      * @param entry The {@link TableEntry}
@@ -2681,7 +2686,7 @@ public class TablingSolver extends AbstractSolver {
      */
     private void getTableEntry(TableEntry entry, int cellIndex, int cand, boolean set) {
         if (DEBUG) {
-            //System.out.println("getTableEntry() 1: " + cellIndex + "/" + cand + "/" + set);
+            //log.debug("getTableEntry() 1: " + cellIndex + "/" + cand + "/" + set);
         }
         if (set) {
             // set the cell and record all dependencies
@@ -2694,7 +2699,7 @@ public class TablingSolver extends AbstractSolver {
                 int setCand = sudoku.getAllCandidates(cellIndex)[0];
                 // getRetIndices == false causes retIndex == 0
                 if (DEBUG) {
-                    //System.out.println("getTableEntry() 2: " + cellIndex + "/" + setCand);
+                    //log.debug("getTableEntry() 2: " + cellIndex + "/" + setCand);
                 }
                 setCell(cellIndex, setCand, entry, false, true);
             }
@@ -2710,7 +2715,7 @@ public class TablingSolver extends AbstractSolver {
                 SolutionStep step = singleSteps.get(i);
                 int index = step.getIndices().get(0);
                 if (DEBUG) {
-                    //System.out.println("getTableEntry() 3: " + index + "/" + step.getValues().get(0) + "/" + step.getType().getStepName());
+                    //log.debug("getTableEntry() 3: " + index + "/" + step.getValues().get(0) + "/" + step.getType().getStepName());
                 }
                 setCell(index, step.getValues().get(0), entry, true,
                         step.getType() == SolutionType.NAKED_SINGLE);
@@ -2735,7 +2740,7 @@ public class TablingSolver extends AbstractSolver {
         if (sudoku.getValue(cellIndex) != 0) {
             // nothing to do
             if (DEBUG) {
-                //System.out.println("TablungSolver.setCell(): Cell already set (" + cellIndex + "/" + cand + "/" + SolutionStep.getCellPrint(cellIndex) + ")");
+                //log.debug("TablungSolver.setCell(): Cell already set (" + cellIndex + "/" + cand + "/" + SolutionStep.getCellPrint(cellIndex) + ")");
             }
             return;
         }
@@ -2769,15 +2774,15 @@ public class TablingSolver extends AbstractSolver {
                 int constrNumber = Sudoku2.CONSTRAINTS[cellIndex][i];
                 if (DEBUG) {
 //                    if (cellIndex == 63 && cand == 5) {
-//                        System.out.println("63/5: " + constrNumber + "/" + sudoku.getFree()[constrNumber][cand]);
+//                        log.debug("63/5: " + constrNumber + "/" + sudoku.getFree()[constrNumber][cand]);
 //                        tmpSet1.setAnd(entry.offSets[cand],
 //                                Sudoku2.ALL_CONSTRAINTS_TEMPLATES[constrNumber]);
-//                        System.out.println("    : " + tmpSet1);
+//                        log.debug("    : " + tmpSet1);
 //                        System.out.print("    : " + entry.offSets[cand]);
 //                        for (int h = 0; h < entry.offSets[cand].size(); h++) {
 //                            System.out.print("  " + SolutionStep.getCellPrint(entry.offSets[cand].get(h)));
 //                        }
-//                        System.out.println("");
+//                        log.debug("");
 //                    }
                 }
                 if (sudoku.getFree()[constrNumber][cand] <= 1) {
@@ -2791,12 +2796,12 @@ public class TablingSolver extends AbstractSolver {
 //                            for (int h = 0; h < tmpSet1.size(); h++) {
 //                                System.out.print("  " + SolutionStep.getCellPrint(tmpSet1.get(h)));
 //                            }
-//                            System.out.println("");
+//                            log.debug("");
 //                            System.out.print("y   : " + entry.offSets[cand]);
 //                            for (int h = 0; h < entry.offSets[cand].size(); h++) {
 //                                System.out.print("  " + SolutionStep.getCellPrint(entry.offSets[cand].get(h)));
 //                            }
-//                            System.out.println("");
+//                            log.debug("");
 //                        }
 //                    }
                     if (tmpSet1.andEquals(entry.offSets[cand])) {
@@ -2812,20 +2817,20 @@ public class TablingSolver extends AbstractSolver {
             if (entityNumberFree == 100 && cellCands.length > 1) {
                 // its not a Hidden Single, but a Naked Single
                 if (DEBUG) {
-                    System.out.println("TablingSolver.setCell(): Switching to Naked Single (" + cellIndex + "/" + cand + ")");
+                    log.debug("TablingSolver.setCell(): Switching to Naked Single (" + cellIndex + "/" + cand + ")");
                 }
                 nakedSingle = true;
             }
             if (DEBUG) {
                 if (getRetIndices && !nakedSingle && entityNumberFree == 100) {
                     // only relevant for Hidden Singles
-                    System.out.println("TablingSolver.setCell(): No house found! " + cellIndex + "/" + cand + "/" + nakedSingle + "/" + getRetIndices);
+                    log.debug("TablingSolver.setCell(): No house found! " + cellIndex + "/" + cand + "/" + nakedSingle + "/" + getRetIndices);
                 }
             }
         }
         // now set the cell
         if (DEBUG) {
-            //System.out.println("   setCell(): " + cellIndex + "/" + cand + " (" + SolutionStep.getCellPrint(cellIndex) + ")");
+            //log.debug("   setCell(): " + cellIndex + "/" + cand + " (" + SolutionStep.getCellPrint(cellIndex) + ")");
         }
         sudoku.setCell(cellIndex, cand);
         int retIndex = entry.index;
@@ -2839,7 +2844,7 @@ public class TablingSolver extends AbstractSolver {
                 // +1 because the set candidate is still present here
                 if (cellCands.length > retIndices[0].length + 1) {
                     if (DEBUG) {
-                        System.out.println("Too many candidates (setCell() - Naked Single");
+                        log.debug("Too many candidates (setCell() - Naked Single");
                     }
                     Logger.getLogger(getClass().getName()).log(Level.WARNING, "Too many candidates (setCell() - Naked Single");
                 }
@@ -2850,7 +2855,7 @@ public class TablingSolver extends AbstractSolver {
                     }
                     retIndices[0][ri++] = entry.getEntryIndex(cellIndex, false, cellCands[i]);
                     if (DEBUG) {
-                        //System.out.println("     NS - retIndices[0][" + (ri - 1) + "] = " + retIndices[0][ri - 1] + " (" + cellIndex + "/" + cellCands[i] + ")");
+                        //log.debug("     NS - retIndices[0][" + (ri - 1) + "] = " + retIndices[0][ri - 1] + " (" + cellIndex + "/" + cellCands[i] + ")");
                     }
                 }
             } else {
@@ -2858,7 +2863,7 @@ public class TablingSolver extends AbstractSolver {
                 // already stored in tmpSet2
                 if (tmpSet2.size() > retIndices[0].length) {
                     if (DEBUG) {
-                        System.out.println("Too many candidates (setCell() - Hidden Single");
+                        log.debug("Too many candidates (setCell() - Hidden Single");
                     }
                     Logger.getLogger(getClass().getName()).log(Level.WARNING, "Too many candidates (setCell() - Hidden Single");
                 }
@@ -2866,7 +2871,7 @@ public class TablingSolver extends AbstractSolver {
                 for (int i = 0; i < tmpSet2.size() && ri < retIndices[0].length; i++) {
                     retIndices[0][ri++] = entry.getEntryIndex(tmpSet2.get(i), false, cand);
                     if (DEBUG) {
-                        //System.out.println("     HS - retIndices[0][" + (ri - 1) + "] = " + retIndices[0][ri - 1] + " (" + tmpSet2.get(i) + "/" + cand + ")");
+                        //log.debug("     HS - retIndices[0][" + (ri - 1) + "] = " + retIndices[0][ri - 1] + " (" + tmpSet2.get(i) + "/" + cand + ")");
                     }
                 }
 //                if (entityType == Sudoku2.LINE) {
@@ -2898,7 +2903,7 @@ public class TablingSolver extends AbstractSolver {
 
     /**
      * Collect the entries for all candidates in a given house. All those
-     * canddiates have to be eliminated before the cell can be set. Used by 
+     * canddiates have to be eliminated before the cell can be set. Used by
      * {@link #setCell(int, int, solver.TableEntry, boolean, boolean)}.
      *
      * @param cellIndex
@@ -2989,7 +2994,7 @@ public class TablingSolver extends AbstractSolver {
             }
             if (dest.isFull()) {
                 if (DEBUG) {
-                    System.out.println("WARNING: TableEntry full (" + SolutionStep.getCellPrint(index) + (isOn ? "=" : "<>") + cand);
+                    log.debug("WARNING: TableEntry full (" + SolutionStep.getCellPrint(index) + (isOn ? "=" : "<>") + cand);
                 }
                 // nothing left to do...
                 Logger.getLogger(getClass().getName()).log(Level.WARNING, "TableEntry full!");
@@ -3006,7 +3011,7 @@ public class TablingSolver extends AbstractSolver {
                 Integer tmpSI = extendedTableMap.get(dest.entries[destIndex]);
                 if (tmpSI == null) {
                     if (DEBUG) {
-                        System.out.println("WARNING: Table for " + printTableEntry(dest.entries[destIndex], alses) + " not found!");
+                        log.debug("WARNING: Table for " + printTableEntry(dest.entries[destIndex], alses) + " not found!");
                     }
                     Logger.getLogger(getClass().getName()).log(Level.WARNING, "Table for {0} not found!", printTableEntry(dest.entries[destIndex], alses));
                     continue;
@@ -3029,7 +3034,7 @@ public class TablingSolver extends AbstractSolver {
                 tmpBuffer.append("index == ").append(index).append(", j == ").append(destIndex).append(", dest.entries[j] == ").append(dest.entries[destIndex]).append(": ");
                 tmpBuffer.append(printTableEntry(dest.entries[destIndex], alses));
                 if (DEBUG) {
-                    System.out.println("WARNING: " + tmpBuffer);
+                    log.debug("WARNING: " + tmpBuffer);
                 }
                 Logger.getLogger(getClass().getName()).log(Level.WARNING, tmpBuffer.toString());
                 continue;
@@ -3101,20 +3106,20 @@ public class TablingSolver extends AbstractSolver {
         do {
             count++;
             // TODO
-//            System.out.println("createNets() start: " + count + "/" + entryAnz);
+//            log.debug("createNets() start: " + count + "/" + entryAnz);
             entryAnz = newEntryAnz;
             createNets();
             newEntryAnz = getTableAnz();
-//            System.out.println("createNets() end: " + count + "/" + newEntryAnz);
+//            log.debug("createNets() end: " + count + "/" + newEntryAnz);
         } while (newEntryAnz > entryAnz);
         if (DEBUG) {
             nanos = System.nanoTime() - nanos;
-            System.out.println("createAllNets(): " + (nanos / 1000000l) + "ms (" + count + " iterations)");
+            log.debug("createAllNets(): " + (nanos / 1000000l) + "ms (" + count + " iterations)");
         }
     }
 
     /**
-     * Tries to find nets in existing tables. Delegates to 
+     * Tries to find nets in existing tables. Delegates to
      * {@link #createNet(solver.TableEntry)}.
      */
     private void createNets() {
@@ -3141,16 +3146,16 @@ public class TablingSolver extends AbstractSolver {
      * <code>src</code> and tries to determine, if a combination of outcomes can
      * produce a new one.<br><br>
      *
-     * Currently the following patterns are checked: 
-     * 
-     * <ul> 
-     *  <li>Entries deleting all but one candiates in a house</li> 
-     *  <li>Entries deleting all but one candidate in a cell</li> 
+     * Currently the following patterns are checked:
+     *
+     * <ul>
+     *  <li>Entries deleting all but one candiates in a house</li>
+     *  <li>Entries deleting all but one candidate in a cell</li>
      *  <li>Entries deleting all candidates of a group node</li>
      *  <li>Entries setting all candidates of a group node</li>
      *  <li>Entries deleting all instances of a candidate in an ALS</li>
-     * </ul> 
-     * 
+     * </ul>
+     *
      * The search is done via the {@link TableEntry#offSets} of
      * <code>src</code>.<br><br>
      *
@@ -3165,7 +3170,7 @@ public class TablingSolver extends AbstractSolver {
      */
     private void createNet(TableEntry src, int srcIndex, int srcCand, boolean isOn) {
         if (DEBUG) {
-            System.out.println("createNet(): " + Chain.toString(src.entries[0]));
+            log.debug("createNet(): " + Chain.toString(src.entries[0]));
         }
         // store the current amount of entries in the table (for expansion)
         int currentTableIndex = src.index;
@@ -3253,11 +3258,11 @@ public class TablingSolver extends AbstractSolver {
                 continue;
             }
         }
-        // group nodes: if all candidates outside of a of a group node are 
+        // group nodes: if all candidates outside of a of a group node are
         // deleted/set, the group node is triggered
         if (withGroupNodes) {
             if (DEBUG) {
-                System.out.println("  start on group nodes");
+                log.debug("  start on group nodes");
             }
             groupNodes = finder.getGroupNodes();
             for (int i = 0; i < groupNodes.size(); i++) {
@@ -3313,19 +3318,19 @@ public class TablingSolver extends AbstractSolver {
         expandTable(src, srcIndex, srcCand, isOn, currentTableIndex, -1);
         if (DEBUG) {
             if (srcIndex == 54 && srcCand == 8 && isOn == true) {
-//                System.out.println("expanding table:");
+//                log.debug("expanding table:");
 //                printTable("r7c1=8", onTable[548], alses);
             }
         }
     }
 
     /**
-     * Make a single new entry in <code>src</code> for setting <code>cand</code> 
+     * Make a single new entry in <code>src</code> for setting <code>cand</code>
      * in <code>index</code>.<br><br>
-     * 
+     *
      * <code>entries</code> contains all other cells, which lead to the new net
-     * entry. If <code>entries</code> is <code>null</code>, a cell is set due to 
-     * all but one candidate deleted from it and <code>cands</code> contains the 
+     * entry. If <code>entries</code> is <code>null</code>, a cell is set due to
+     * all but one candidate deleted from it and <code>cands</code> contains the
      * candidates that lead to the new entry.
      *
      * @param src Table for which the new entry should be created
@@ -3348,7 +3353,7 @@ public class TablingSolver extends AbstractSolver {
             short cands, boolean newOnOff, int nodeType, GroupNode gn, Als als) {
         if (DEBUG) {
             if (nodeType == Chain.NORMAL_NODE && index == 11 && index2 == -1 && index3 == -1 && cand == 7 && newOnOff == false) {
-                System.out.println("      Creating entry for " + gn + " " + newOnOff + " (Entry: " + Chain.toString(src.entries[0]) + ")");
+                log.debug("      Creating entry for " + gn + " " + newOnOff + " (Entry: " + Chain.toString(src.entries[0]) + ")");
             }
         }
         // check, if it already exists
@@ -3362,7 +3367,7 @@ public class TablingSolver extends AbstractSolver {
             entry = Chain.makeSEntry(index, index2, index3, cand, newOnOff, nodeType);
             if (DEBUG) {
                 if (nodeType == Chain.NORMAL_NODE && index == 11 && index2 == -1 && index3 == -1 && cand == 7 && newOnOff == false) {
-                    System.out.println("       entry: " + Chain.toString(entry));
+                    log.debug("       entry: " + Chain.toString(entry));
                 }
             }
         }
@@ -3372,13 +3377,13 @@ public class TablingSolver extends AbstractSolver {
             oldDistance = src.getDistance(atIndex);
             if (DEBUG) {
                 if (nodeType == Chain.NORMAL_NODE && index == 11 && index2 == -1 && index3 == -1 && cand == 7 && newOnOff == false) {
-                    System.out.println("       already there: distance = " + oldDistance + " (" + atIndex + ")");
+                    log.debug("       already there: distance = " + oldDistance + " (" + atIndex + ")");
                 }
             }
         } else {
             if (DEBUG) {
                 if (nodeType == Chain.NORMAL_NODE && index == 11 && index2 == -1 && index3 == -1 && cand == 7 && newOnOff == false) {
-                    System.out.println("       new entry");
+                    log.debug("       new entry");
                 }
             }
         }
@@ -3399,7 +3404,7 @@ public class TablingSolver extends AbstractSolver {
                 entry = Chain.makeSEntry(actIndex, cand, !newOnOff);
                 if (!src.indices.containsKey(entry)) {
                     if (DEBUG) {
-                        System.out.println("makeNetEntry: Entry for net not in table (1 - " + actIndex + "/" + cand);
+                        log.debug("makeNetEntry: Entry for net not in table (1 - " + actIndex + "/" + cand);
                     }
                     continue;
                 }
@@ -3407,13 +3412,13 @@ public class TablingSolver extends AbstractSolver {
                 if (retIndex < retIndices[0].length) {
                     retIndices[0][retIndex++] = ri;
                 } else if (DEBUG) {
-                    System.out.println("makeNetEntry: Too many retindices");
+                    log.debug("makeNetEntry: Too many retindices");
                 }
                 distance += (src.getDistance(ri) + 1);
             }
             if (DEBUG) {
                 if (nodeType == Chain.NORMAL_NODE && index == 11 && index2 == -1 && index3 == -1 && cand == 7 && newOnOff == false) {
-                    System.out.println("       new distance = " + distance);
+                    log.debug("       new distance = " + distance);
                 }
             }
         } else if (nodeType == Chain.ALS_NODE) {
@@ -3428,7 +3433,7 @@ public class TablingSolver extends AbstractSolver {
                 tmpSet1.setAnd(src.onSets[cand], Sudoku2.buddies[actIndex]);
                 if (tmpSet1.isEmpty()) {
                     if (DEBUG) {
-                        System.out.println("makeNetEntry: No buddies found for als node (" + als + "/" + cand + ")");
+                        log.debug("makeNetEntry: No buddies found for als node (" + als + "/" + cand + ")");
                     }
                     return;
                 }
@@ -3437,7 +3442,7 @@ public class TablingSolver extends AbstractSolver {
                     entry = Chain.makeSEntry(tmpSet1.get(j), cand, true);
                     if (!src.indices.containsKey(entry)) {
                         if (DEBUG) {
-                            System.out.println("makeNetEntry: Entry for net not in table (als node - " + als + "/" + cand);
+                            log.debug("makeNetEntry: Entry for net not in table (als node - " + als + "/" + cand);
                         }
                         // cant do anything!
                         return;
@@ -3469,7 +3474,7 @@ public class TablingSolver extends AbstractSolver {
                 entry = Chain.makeSEntry(index, cand1, false);
                 if (!src.indices.containsKey(entry)) {
                     if (DEBUG) {
-                        System.out.println("ERROR: Entry for net not in table (2 - " + index + "/" + cand1);
+                        log.debug("ERROR: Entry for net not in table (2 - " + index + "/" + cand1);
                     }
                     continue;
                 }
@@ -3477,7 +3482,7 @@ public class TablingSolver extends AbstractSolver {
                 if (retIndex < retIndices[0].length) {
                     retIndices[0][retIndex++] = ri;
                 } else if (DEBUG) {
-                    System.out.println("makeNetEntry: Too many ret indices");
+                    log.debug("makeNetEntry: Too many ret indices");
                 }
                 distance += (src.getDistance(ri) + 1);
             }
@@ -3489,10 +3494,10 @@ public class TablingSolver extends AbstractSolver {
             retIndices[0][i] = 0;
         }
         // write the entry
-//        System.out.println("   new distance: " + distance);
+//        log.debug("   new distance: " + distance);
         if (alreadyThere) {
             if (distance < oldDistance) {
-//                System.out.println("   overwrite old entry");
+//                log.debug("   overwrite old entry");
                 // shorter distance when reached as net -> recode it
                 // in expanded nodes the first ret index points to the
                 // other Table -> must be retained
@@ -3511,25 +3516,25 @@ public class TablingSolver extends AbstractSolver {
                 src.setDistance(atIndex, distance);
                 if (DEBUG) {
                     if (nodeType == Chain.NORMAL_NODE && index == 11 && index2 == -1 && index3 == -1 && cand == 7 && newOnOff == false) {
-                        System.out.println("       set new distance: " + distance);
+                        log.debug("       set new distance: " + distance);
                     }
                 }
                 // expand the single entry: recalculates distances of all depending entries
                 expandTable(src, srcIndex, srcCand, isOn, 0, atIndex);
                 if (DEBUG) {
                     if (nodeType == Chain.NORMAL_NODE && index == 11 && index2 == -1 && index3 == -1 && cand == 7 && newOnOff == false) {
-                        System.out.println("       expanding...");
+                        log.debug("       expanding...");
                         printTable("??", onTable[548], alses);
                     }
                 }
             } else {
                 // do nothing
                 if (nodeType == Chain.NORMAL_NODE && index == 11 && index2 == -1 && index3 == -1 && cand == 7 && newOnOff == false) {
-                    System.out.println("       ignored: " + distance + "/" + oldDistance);
+                    log.debug("       ignored: " + distance + "/" + oldDistance);
                 }
             }
         } else {
-//            System.out.println("   add new entry");
+//            log.debug("   add new entry");
             if (nodeType == Chain.ALS_NODE) {
                 // index2 contains the ALS index
                 src.addEntry(index, Chain.getSLowerAlsIndex(index2),
@@ -3545,8 +3550,8 @@ public class TablingSolver extends AbstractSolver {
             if (DEBUG) {
 //                if (nodeType == Chain.NORMAL_NODE && index == 11 && index2 == -1 && index3 == -1 && cand == 7 && newOnOff == false) {
                 if (nodeType == Chain.GROUP_NODE) {
-                    System.out.println("       entry added: " + Chain.toString(src.entries[src.index - 1]) + " to " + Chain.toString(src.entries[0]));
-                    System.out.println("       distance: " + distance);
+                    log.debug("       entry added: " + Chain.toString(src.entries[src.index - 1]) + " to " + Chain.toString(src.entries[0]));
+                    log.debug("       distance: " + distance);
 //                    printTable("??", onTable[548], alses);
                 }
             }
@@ -3555,12 +3560,12 @@ public class TablingSolver extends AbstractSolver {
 
     /**
      * Checks, if a {@link GroupNode} entry can be turned on or off due to a net.<br><br>
-     * 
+     *
      * A <code>GroupNode<code> can be turned on, when all other candidates in the
      * containing house are deleted (there must be more than one candidate for a
      * net to be possible), and it can be turned off, if all other candidates
      * are set.
-     * 
+     *
      * @param src The {@link TableEntry} of the source.
      * @param srcIndex The current index in <code>entry</code>.
      * @param srcCand The current candidate in <code>entry</code>.
@@ -3591,7 +3596,7 @@ public class TablingSolver extends AbstractSolver {
     }
 
     /**
-     * Convenience method, delegates to 
+     * Convenience method, delegates to
      * {@link #addChain(solver.TableEntry, int, int, boolean, boolean, boolean)}.
      *
      * @param entry
@@ -3604,7 +3609,7 @@ public class TablingSolver extends AbstractSolver {
     }
 
     /**
-     * Convenience method, delegates to 
+     * Convenience method, delegates to
      * {@link #addChain(solver.TableEntry, int, int, boolean, boolean, boolean)}.
      *
      * @param entry
@@ -3620,7 +3625,7 @@ public class TablingSolver extends AbstractSolver {
     /**
      * Construct the chain for a premise and an implication. Since we have
      * to build the chain from back to start via the retIndices, the
-     * chain must be reversed before it can be written into a 
+     * chain must be reversed before it can be written into a
      * {@link SolutionStep}.
      *
      * @param entry Premise for the chain (first step in the chain)
@@ -3722,14 +3727,14 @@ public class TablingSolver extends AbstractSolver {
     /**
      * Constructs a chain for a given premise and a given implication. It
      * looks up the correct entry in
-     * <code>entry</code> and delegates the real work to     
-     * {@link #buildChain(solver.TableEntry, int, int[], boolean, sudoku.SudokuSet)}. 
+     * <code>entry</code> and delegates the real work to
+     * {@link #buildChain(solver.TableEntry, int, int[], boolean, sudoku.SudokuSet)}.
      * If the chain is a net, the net parts are constructed as
      * well.<br><br>
      *
      * The main chain is written to {@link #chain}, the net parts are
      * written to {@link #mins}. The chain is from back to front, it is
-     * reversed by    
+     * reversed by
      * {@link #addChain(solver.TableEntry, int, int, boolean, boolean, boolean)}.
      *
      * @param entry The table entry holding the premise and the implication
@@ -3742,7 +3747,7 @@ public class TablingSolver extends AbstractSolver {
             if (Chain.getSCellIndex(entry.entries[0]) == 54 && Chain.getSCandidate(entry.entries[0]) == 8 && Chain.isSStrong(entry.entries[0])
                     && cellIndex == 54 && cand == 8 && !set) {
                 int eEntry = Chain.makeSEntry(cellIndex, cand, set);
-                System.out.println("buildChain() START (" + Chain.toString(entry.entries[0]) + " - " + Chain.toString(eEntry) + ")");
+                log.debug("buildChain() START (" + Chain.toString(entry.entries[0]) + " - " + Chain.toString(eEntry) + ")");
                 doDebug = true;
             }
         }
@@ -3751,7 +3756,7 @@ public class TablingSolver extends AbstractSolver {
         int chainEntry = Chain.makeSEntry(cellIndex, cand, set);
         if (!entry.indices.containsKey(chainEntry)) {
             if (DEBUG) {
-                System.out.println("No chain entry for " + cellIndex + "/" + SolutionStep.getCellPrint(cellIndex) + "/" + cand + "/" + set);
+                log.debug("No chain entry for " + cellIndex + "/" + SolutionStep.getCellPrint(cellIndex) + "/" + cand + "/" + set);
                 Logger.getLogger(getClass().getName()).log(Level.WARNING, "No chain entry for {0}/{1}/{2}/{3}", new Object[]{cellIndex, SolutionStep.getCellPrint(cellIndex), cand, set});
             }
             return;
@@ -3760,7 +3765,7 @@ public class TablingSolver extends AbstractSolver {
         if (DEBUG) {
             if (Chain.getSCellIndex(entry.entries[0]) == 54 && Chain.getSCandidate(entry.entries[0]) == 8 && Chain.isSStrong(entry.entries[0])
                     && cellIndex == 54 && cand == 8 && !set) {
-                //System.out.println("   1: " + index + ": " + Chain.toString(chainEntry));
+                //log.debug("   1: " + index + ": " + Chain.toString(chainEntry));
             }
         }
 
@@ -3778,7 +3783,7 @@ public class TablingSolver extends AbstractSolver {
             if (DEBUG) {
                 if (Chain.getSCellIndex(entry.entries[0]) == 54 && Chain.getSCandidate(entry.entries[0]) == 8 && Chain.isSStrong(entry.entries[0])
                         && cellIndex == 54 && cand == 8 && !set) {
-                    System.out.println("buildChain() start new min: " + minIndex + ": " + Chain.toString(mins[minIndex][0]));
+                    log.debug("buildChain() start new min: " + minIndex + ": " + Chain.toString(mins[minIndex][0]));
                 }
             }
             minIndexes[minIndex] = buildChain(entry, entry.getEntryIndex(mins[minIndex][0]), mins[minIndex], true, minEntries[minIndex], minIndex, tmpSetC);
@@ -3788,7 +3793,7 @@ public class TablingSolver extends AbstractSolver {
             if (Chain.getSCellIndex(entry.entries[0]) == 54 && Chain.getSCandidate(entry.entries[0]) == 8 && Chain.isSStrong(entry.entries[0])
                     && cellIndex == 54 && cand == 8 && !set) {
                 int eEntry = Chain.makeSEntry(cellIndex, cand, set);
-                System.out.println("buildChain() END (" + Chain.toString(entry.entries[0]) + " - " + Chain.toString(eEntry) + ")");
+                log.debug("buildChain() END (" + Chain.toString(entry.entries[0]) + " - " + Chain.toString(eEntry) + ")");
                 doDebug = false;
             }
         }
@@ -3796,30 +3801,30 @@ public class TablingSolver extends AbstractSolver {
 
     /**
      * <i>Really</i> constructs the chain for a given premise and a given
-     * implication :-).<br><br> 
-     * 
-     * <ul> 
-     *  <li>Add the implication as first step in the chain</li> 
-     *  <li>retIndex1 points to the entry that caused the implication -&gt; 
-     *      jump to it and handle it next</li> 
-     *  <li>if there are more than one retIndices, the first is treated 
-     *      normally; the others are stored in {@link #mins}/{@link #minIndexes}, 
+     * implication :-).<br><br>
+     *
+     * <ul>
+     *  <li>Add the implication as first step in the chain</li>
+     *  <li>retIndex1 points to the entry that caused the implication -&gt;
+     *      jump to it and handle it next</li>
+     *  <li>if there are more than one retIndices, the first is treated
+     *      normally; the others are stored in {@link #mins}/{@link #minIndexes},
      *      they are evaluated at a later time</li>
      * </ul>
-     * 
-     * The method returns, when the first entry in <code>entry</code> is 
+     *
+     * The method returns, when the first entry in <code>entry</code> is
      * reached.<br><br>
      *
-     * All cells of the main chain are stored in <code>chainSet</code>. When the 
+     * All cells of the main chain are stored in <code>chainSet</code>. When the
      * method is called for a min (multiple inference - the net part of a chain -
-     * <code>isMin</code> is <code>true</code>), the method runs until a cell 
+     * <code>isMin</code> is <code>true</code>), the method runs until a cell
      * from the main chain is reached.
      *
      * <b>CAUTION:</b> The chain is stored in
      * <code>actChain</code> in reverse order!<br><br>
-     * 
+     *
      * 20130902: In normal chains expanded entries are not expanded again. If an
-     * expanded entry is met, we jump to the table holding the original and 
+     * expanded entry is met, we jump to the table holding the original and
      * follow it back to entry 0. Then we jump back to the original table and
      * go on. In Forcing Nets entries are added <i>after the expansion</i>. That
      * means, that an expanded entry in the original table could have an expanded
@@ -3830,8 +3835,8 @@ public class TablingSolver extends AbstractSolver {
      * @param entryIndex The index of the implication in <code>entry</code>.
      * @param actChain The array in which the current chain or min is stored.
      * @param isMin <code>true</code> if we are constructing part of a net.
-     * @param minEntry If <code>isMin</code> is <code>true</code>, the 
-     *          {@link TableEntry} where the first element (implication) of 
+     * @param minEntry If <code>isMin</code> is <code>true</code>, the
+     *          {@link TableEntry} where the first element (implication) of
      *          the min came from.
      * @param minIndex The index into {@link #mins} or <code>-1</code>, if the current
      *          chain is not a min.
@@ -3845,7 +3850,7 @@ public class TablingSolver extends AbstractSolver {
             int dEntry = entry.entries[entryIndex];
             if (Chain.getSCellIndex(entry.entries[0]) == 58 && Chain.getSCandidate(entry.entries[0]) == 4 && Chain.isSStrong(entry.entries[0])
                     && Chain.getSCellIndex(dEntry) == 54 && Chain.getSCandidate(dEntry) == 6 && !Chain.isSStrong(dEntry)) {
-                System.out.println("  doDebugCounter == " + doDebugCounter);
+                log.debug("  doDebugCounter == " + doDebugCounter);
             }
         }
         int actChainIndex = 0;
@@ -3853,7 +3858,7 @@ public class TablingSolver extends AbstractSolver {
         if (DEBUG) {
             if (doDebug) {
                 int e = entry.entries[entryIndex];
-                System.out.println("added to chain: " + Chain.toString(e) + " - " + isMin + " (Table: " + Chain.toString(entry.entries[0]) + ")");
+                log.debug("added to chain: " + Chain.toString(e) + " - " + isMin + " (Table: " + Chain.toString(entry.entries[0]) + ")");
             }
         }
         int firstEntryIndex = entryIndex;
@@ -3868,18 +3873,18 @@ public class TablingSolver extends AbstractSolver {
                 // or the index in extendedTable if the entry is a group or als node
                 if (DEBUG) {
                     if (expanded) {
-                        System.out.println("buildChain(): expanded node in expanded entry (should not be possible)!");
-                        System.out.println("doDebugCounter = " + doDebugCounter);
+                        log.debug("buildChain(): expanded node in expanded entry (should not be possible)!");
+                        log.debug("doDebugCounter = " + doDebugCounter);
                     }
                 }
                 if (DEBUG) {
                     if (doDebug) {
-//                        System.out.println("   3aa: " + entry.isExtendedTable(firstEntryIndex) + "/" + entry.isOnTable(firstEntryIndex) + "/" + Chain.toString(entry.entries[firstEntryIndex]));
+//                        log.debug("   3aa: " + entry.isExtendedTable(firstEntryIndex) + "/" + entry.isOnTable(firstEntryIndex) + "/" + Chain.toString(entry.entries[firstEntryIndex]));
 //                        if (chainIndex > 0) {
-//                            System.out.println("        " + Chain.toString(chain[chainIndex - 1]));
+//                            log.debug("        " + Chain.toString(chain[chainIndex - 1]));
 //                        }
 //                        if (chainIndex > 1) {
-//                            System.out.println("        " + Chain.toString(chain[chainIndex - 2]));
+//                            log.debug("        " + Chain.toString(chain[chainIndex - 2]));
 //                        }
                         //printTable("0", orgEntry, alses);
                         //printTable("1", entry, alses);
@@ -3903,14 +3908,14 @@ public class TablingSolver extends AbstractSolver {
                 expanded = true;
                 if (DEBUG) {
                     if (doDebug) {
-                        //System.out.println("   3a: xxx: " + Chain.toString(orgEntry.entries[firstEntryIndex]));
+                        //log.debug("   3a: xxx: " + Chain.toString(orgEntry.entries[firstEntryIndex]));
                         //printTable("2", entry, alses);
                     }
                 }
                 firstEntryIndex = entry.getEntryIndex(orgEntry.entries[firstEntryIndex]);
                 if (DEBUG) {
                     if (doDebug) {
-                        //System.out.println("   3: " + firstEntryIndex + ": " + Chain.toString(entry.entries[firstEntryIndex]));
+                        //log.debug("   3: " + firstEntryIndex + ": " + Chain.toString(entry.entries[firstEntryIndex]));
                     }
                 }
             }
@@ -3925,7 +3930,7 @@ public class TablingSolver extends AbstractSolver {
                     if (DEBUG) {
                         if (doDebug) {
                             int e = entry.entries[entryIndex];
-                            System.out.println("added to chain: " + Chain.toString(e) + " - " + isMin + " (Table: " + Chain.toString(entry.entries[0]) + ")");
+                            log.debug("added to chain: " + Chain.toString(e) + " - " + isMin + " (Table: " + Chain.toString(entry.entries[0]) + ")");
                         }
                     }
                     if (!isMin) {
@@ -3964,7 +3969,7 @@ public class TablingSolver extends AbstractSolver {
                                     if (DEBUG) {
                                         int e = entry.entries[entryIndex];
                                         if (doDebug) {
-                                            System.out.println("  min ended in: " + Chain.toString(e) + " - " + Chain.toString(orgEntry.entries[0]) + " - " + Chain.toString(chain[0]) + " (Table: " + Chain.toString(entry.entries[0]) + ")");
+                                            log.debug("  min ended in: " + Chain.toString(e) + " - " + Chain.toString(orgEntry.entries[0]) + " - " + Chain.toString(chain[0]) + " (Table: " + Chain.toString(entry.entries[0]) + ")");
                                         }
                                     }
                                     return actChainIndex;
@@ -3985,7 +3990,7 @@ public class TablingSolver extends AbstractSolver {
                             minIndexes[actMin++] = 1;
                             if (DEBUG) {
                                 if (doDebug) {
-                                    System.out.println("   added min start: " + Chain.toString(entry.entries[entryIndex]) + " (" + (actMin - 1) + ")");
+                                    log.debug("   added min start: " + Chain.toString(entry.entries[entryIndex]) + " (" + (actMin - 1) + ")");
                                 }
                             }
                         }
@@ -4016,7 +4021,7 @@ public class TablingSolver extends AbstractSolver {
                 firstEntryIndex = entry.getEntryIndex(retEntry);
                 if (DEBUG) {
                     if (doDebug) {
-                        //System.out.println("   4: " + firstEntryIndex + ": " + Chain.toString(retEntry));
+                        //log.debug("   4: " + firstEntryIndex + ": " + Chain.toString(retEntry));
                     }
                 }
                 expanded = false;
@@ -4030,15 +4035,15 @@ public class TablingSolver extends AbstractSolver {
      * @param title
      * @param onTable
      * @param offTable
-     * @param alses  
+     * @param alses
      */
     public static void printTables(String title, TableEntry[] onTable, TableEntry[] offTable, List<Als> alses) {
         if (!DEBUG) {
             return;
         }
-        System.out.println("==========================================");
-        System.out.println(title);
-        System.out.println("==========================================");
+        log.debug("==========================================");
+        log.debug(title);
+        log.debug("==========================================");
         for (int i = 0; i < onTable.length; i++) {
             int index = i / 10;
             int candidate = i % 10;
@@ -4047,16 +4052,16 @@ public class TablingSolver extends AbstractSolver {
             }
             String cell = "r" + (Sudoku2.getLine(index) + 1) + "c" + (Sudoku2.getCol(index) + 1);
             if (onTable[i].index == 0) {
-                System.out.println(cell + "=" + candidate + " is EMPTY!");
+                log.debug(cell + "=" + candidate + " is EMPTY!");
             } else {
                 printTable(cell + "=" + candidate, onTable[i], alses);
-                System.out.println();
+                log.debug("");
             }
             if (offTable[i].index == 0) {
-                System.out.println(cell + "<>" + candidate + " is EMPTY!");
+                log.debug(cell + "<>" + candidate + " is EMPTY!");
             } else {
                 printTable(cell + "<>" + candidate, offTable[i], alses);
-                System.out.println();
+                log.debug("");
             }
         }
     }
@@ -4066,13 +4071,13 @@ public class TablingSolver extends AbstractSolver {
      *
      * @param title
      * @param entry
-     * @param alses  
+     * @param alses
      */
     public static void printTable(String title, TableEntry entry, List<Als> alses) {
         if (!DEBUG) {
             return;
         }
-        System.out.println(title + ": ");
+        log.debug(title + ": ");
         int anz = 0;
         StringBuilder tmp = new StringBuilder();
         for (int i = 0; i < entry.index; i++) {
@@ -4093,10 +4098,10 @@ public class TablingSolver extends AbstractSolver {
                 tmp.append("\r\n");
             }
         }
-        System.out.println(tmp.toString());
+        log.debug(tmp.toString());
 //        for (int i = 1; i < entry.onSets.length; i++) {
-//            System.out.println(i + " on:  " + entry.onSets[i]);
-//            System.out.println(i + " off: " + entry.offSets[i]);
+//            log.debug(i + " on:  " + entry.onSets[i]);
+//            log.debug(i + " off: " + entry.offSets[i]);
 //        }
     }
 
@@ -4104,7 +4109,7 @@ public class TablingSolver extends AbstractSolver {
      * Show one {@link TableEntry} (for debugging).
      *
      * @param entry
-     * @param alses 
+     * @param alses
      * @return
      */
     public static String printTableEntry(int entry, List<Als> alses) {
@@ -4174,7 +4179,7 @@ public class TablingSolver extends AbstractSolver {
                 }
             }
         }
-        System.out.println("Tables: " + onAnz + " onTableEntries, " + offAnz + " offTableEntries, "
+        log.debug("Tables: " + onAnz + " onTableEntries, " + offAnz + " offTableEntries, "
                 + entryAnz + " Implikationen (" + maxEntryAnz + " max)");
 
 
@@ -4192,22 +4197,22 @@ public class TablingSolver extends AbstractSolver {
      * Compares two {@link SolutionStep SolutionSteps} that hold steps found by
      * tabling. The sort order:
      *
-     * <ol> 
+     * <ol>
      *  <li>steps that set cells beat steps that delete candidates</li>
      *  <li>if both steps set cells:
-     *  <ul> 
+     *  <ul>
      *      <li>number of cells that can be set</li>
-     *      <li>equivalency (same cells?)</li> 
-     *      <li>cells with lower indices go first</li> 
+     *      <li>equivalency (same cells?)</li>
+     *      <li>cells with lower indices go first</li>
      *      <li>chain length in all chains</li>
-     *  </ul></li> 
+     *  </ul></li>
      *  <li>if both steps eliminate candidates:
-     *  <ul> 
-     *      <li>number of candidates that can be deleted</li> 
-     *      <li>equivalency (same cells affected?)</li> 
-     *      <li>lower cells and lower candidates first</li> 
+     *  <ul>
+     *      <li>number of candidates that can be deleted</li>
+     *      <li>equivalency (same cells affected?)</li>
+     *      <li>lower cells and lower candidates first</li>
      *      <li>chain length in all chains</li>
-     *  </ul></li> 
+     *  </ul></li>
      * </ol>
      */
     class TablingComparator implements Comparator<SolutionStep> {
@@ -4335,13 +4340,13 @@ public class TablingSolver extends AbstractSolver {
             steps = finder.getAllGroupedNiceLoops(sudoku);
             TablingSolver ts = finder.getTablingSolver();
             for (int c = 1; c < 10; c++) {
-                System.out.println("==== Eliminations for candidate " + c + " ==============");
+                log.debug("==== Eliminations for candidate " + c + " ==============");
                 for (int j = 0; j < ts.onTable.length; j++) {
                     if (ts.onTable[j].index > 0 && !ts.onTable[j].offSets[c].isEmpty()) {
-                        System.out.println(SolutionStep.getCellPrint(j / 10) + "/" + (j % 10) + "/on:  " + ts.onTable[j].offSets[c]);
+                        log.debug(SolutionStep.getCellPrint(j / 10) + "/" + (j % 10) + "/on:  " + ts.onTable[j].offSets[c]);
                     }
                     if (ts.offTable[j].index > 0 && !ts.offTable[j].offSets[c].isEmpty()) {
-                        System.out.println(SolutionStep.getCellPrint(j / 10) + "/" + (j % 10) + "/off: " + ts.offTable[j].offSets[c]);
+                        log.debug(SolutionStep.getCellPrint(j / 10) + "/" + (j % 10) + "/off: " + ts.offTable[j].offSets[c]);
                     }
                 }
             }
@@ -4349,11 +4354,11 @@ public class TablingSolver extends AbstractSolver {
             //steps = finder.getAllGroupedNiceLoops(sudoku);
         }
         ticks = System.currentTimeMillis() - ticks;
-        System.out.println("Dauer: " + (ticks / anzLoops) + "ms");
-        System.out.println("Anzahl Steps: " + steps.size());
+        log.debug("Dauer: " + (ticks / anzLoops) + "ms");
+        log.debug("Anzahl Steps: " + steps.size());
         for (int i = 0; i < steps.size(); i++) {
-            //System.out.println(steps.get(i).getCandidateString());
-            System.out.println(steps.get(i).toString(2));
+            //log.debug(steps.get(i).getCandidateString());
+            log.debug(steps.get(i).toString(2));
         }
     }
 }
