@@ -29,7 +29,7 @@ import java.util.List;
  * threads an arbitrary number of additional solver instances can be gotten
  * from this factory.<br>
  * Solvers have to be released after they are used.
- * 
+ *
  * @author hobiwan
  */
 public class SudokuSolverFactory {
@@ -40,13 +40,12 @@ public class SudokuSolverFactory {
     /** A background thread that cleans up unused SudokuSolver instances. */
     private static final Thread thread = new Thread( new Runnable() {
         @Override
-        @SuppressWarnings("SleepWhileInLoop")
         public void run() {
             while (true) {
                 synchronized (thread) {
                     // cleanup for defaultSolver
                     defaultSolver.getStepFinder().cleanUp();
-                    
+
                     // now check all other solvers
                     Iterator<SolverInstance> iterator = instances.iterator();
                     while (iterator.hasNext()) {
@@ -65,7 +64,7 @@ public class SudokuSolverFactory {
                 }
             }
         }
-    });
+    }, SudokuSolver.class.getSimpleName());
     /** The default cleanup time for SudokuSolver instances. */
     private static final long SOLVER_TIMEOUT = 5 * 60 * 1000;
 
@@ -100,7 +99,7 @@ public class SudokuSolverFactory {
     private SudokuSolverFactory() { /* class cannot be instantiated! */ }
 
     /** Get the {@link #defaultSolver}.
-     * @return 
+     * @return
      */
     public static SudokuSolver getDefaultSolverInstance() {
         return defaultSolver;

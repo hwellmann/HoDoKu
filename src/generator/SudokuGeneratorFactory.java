@@ -29,7 +29,7 @@ import java.util.List;
  * threads an arbitrary number of additional generator instances can be gotten
  * from this factory.<br>
  * Generators have to be released after they are used.
- * 
+ *
  * @author hobiwan
  */
 public class SudokuGeneratorFactory {
@@ -59,7 +59,7 @@ public class SudokuGeneratorFactory {
                 }
             }
         }
-    });
+    }, SudokuGenerator.class.getSimpleName());
     /** The default cleanup time for SudokuGenerator instances. */
     private static final long GENERATOR_TIMEOUT = 5 * 60 * 1000;
 
@@ -94,7 +94,7 @@ public class SudokuGeneratorFactory {
     private SudokuGeneratorFactory() { /* class cannot be instantiated! */ }
 
     /** Get the {@link #defaultGenerator}.
-     * @return 
+     * @return
      */
     public static SudokuGenerator getDefaultGeneratorInstance() {
         return defaultGenerator;

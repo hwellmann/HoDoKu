@@ -19,8 +19,9 @@
 
 package generator;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sudoku.DifficultyLevel;
 import sudoku.DifficultyType;
 import sudoku.GameMode;
@@ -45,12 +46,13 @@ import sudoku.StepConfig;
  *  <li>When a configuration is loaded from a file, all puzzles are redone</li>
  * </ul>
  * This class is a singleton.
- * 
+ *
  * @author hobiwan
  */
 public class BackgroundGeneratorThread implements Runnable {
-    /** Debug flag */
-    private static final boolean DEBUG = false;
+
+    private static Logger log = LoggerFactory.getLogger(BackgroundGeneratorThread.class);
+
     /** The singleton instance */
     private static BackgroundGeneratorThread instance = null;
     /** the actual creator */
@@ -61,19 +63,19 @@ public class BackgroundGeneratorThread implements Runnable {
     private boolean newRequest = false;
     /** a flag that indicates, if the thread has been started yet */
     private boolean threadStarted = false;
-    
+
     /**
      * Creates an instance.
      */
     private BackgroundGeneratorThread() {
-        thread = new Thread(this);
+        thread = new Thread(this, BackgroundGenerator.class.getSimpleName());
         generator = new BackgroundGenerator();
     }
-    
+
     /**
      * Retrieves the singleton instance, generates it if necessary.
-     * 
-     * @return 
+     *
+     * @return
      */
     public static BackgroundGeneratorThread getInstance() {
         if (instance == null) {
@@ -84,10 +86,10 @@ public class BackgroundGeneratorThread implements Runnable {
 
     /**
      * Checks, if a puzzle matching the requirements is available.
-     * 
+     *
      * @param level
      * @param mode
-     * @return 
+     * @return
      */
     public synchronized String getSudoku(DifficultyLevel level, GameMode mode) {
         // get the correct puzzles from Options
@@ -101,21 +103,19 @@ public class BackgroundGeneratorThread implements Runnable {
             }
             puzzles[puzzles.length - 1] = null;
         }
-        if (DEBUG) {
-            System.out.println("Got puzzle from cache: " + level.getName() + "/" + mode.name() + "/" + newPuzzle);
-        }
+        log.debug("Got puzzle from cache: " + level.getName() + "/" + mode.name() + "/" + newPuzzle);
         // start a new run
         startCreation();
         // and give it back
         return newPuzzle;
     }
-    
+
     /**
      * Writes a new sudoku into the cache.
-     * 
+     *
      * @param level
      * @param mode
-     * @param sudoku 
+     * @param sudoku
      */
     private synchronized void setSudoku(DifficultyLevel level, GameMode mode, String sudoku) {
         // get the correct puzzles from Options
@@ -127,7 +127,7 @@ public class BackgroundGeneratorThread implements Runnable {
             }
         }
     }
-    
+
     /**
      * The step configuration has been changed:
      * reset everything and start over.
@@ -141,7 +141,7 @@ public class BackgroundGeneratorThread implements Runnable {
         }
         resetTrainingPractising();
     }
-    
+
     /**
      * The training configuration has changed: recreate the
      * LEARNING and PRACTISING puzzles and start over.
@@ -157,12 +157,12 @@ public class BackgroundGeneratorThread implements Runnable {
         }
         startCreation();
     }
-    
+
     /**
      * The level has been changed, check if the PRACTISING puzzles
      * have to be recreated.
-     * 
-     * @param newLevel 
+     *
+     * @param newLevel
      */
     public synchronized void setNewLevel(int newLevel) {
         int maxTrainingLevel = getTrainingLevel();
@@ -181,7 +181,7 @@ public class BackgroundGeneratorThread implements Runnable {
         Options.getInstance().setPractisingPuzzlesLevel(newLevel);
         startCreation();
     }
-    
+
     /**
      * Schedules a new creation run. If the thread is not yet running,
      * it is started. The thread is signalled.
@@ -195,21 +195,17 @@ public class BackgroundGeneratorThread implements Runnable {
         if (! threadStarted) {
             thread.start();
             threadStarted = true;
-            if (DEBUG) {
-                System.out.println("BackgroundCreationThread started!");
-            }
+            log.debug("BackgroundCreationThread started!");
         }
         synchronized(thread) {
             // set a flag indicating a newly scheduled check
             newRequest = true;
-            if (DEBUG) {
-                System.out.println("new creation request scheduled!");
-            }
+            log.debug("new creation request scheduled!");
             // wake up the thread, if it is sleeping
             thread.notify();
         }
     }
-    
+
     /**
      * The main thread: If it is signalled it checks, which type of puzzle
      * is missing. As long as a missing puzzle type is found, the creation is
@@ -229,9 +225,7 @@ public class BackgroundGeneratorThread implements Runnable {
                         continue;
                     }
                 }
-                if (DEBUG) {
-                    System.out.println("Creation starting...");
-                }
+                log.debug("Creation starting...");
                 DifficultyLevel level = null;
                 GameMode mode = null;
                 while (level == null && !thread.isInterrupted()) {
@@ -242,14 +236,10 @@ public class BackgroundGeneratorThread implements Runnable {
                         for (int i = 0; i < puzzles.length; i++) {
                             for (int j = 0; j < puzzles[i].length; j++) {
                                 if (puzzles[i][j] == null) {
-                                    if (DEBUG) {
-                                        System.out.println("found level: "+ (i + 1));
-                                    }
+                                    log.debug("found level: "+ (i + 1));
                                     level = Options.getInstance().getDifficultyLevel(i + 1);
                                     mode = GameMode.PLAYING;
-                                    if (DEBUG) {
-                                        System.out.println("   " + level.getName()+ "/" + mode.name());
-                                    }
+                                    log.debug("   " + level.getName()+ "/" + mode.name());
                                     break;
                                 }
                             }
@@ -262,14 +252,10 @@ public class BackgroundGeneratorThread implements Runnable {
                         if (level == null && trLevel != -1) {
                             for (int i = 0; i < puzzles1.length; i++) {
                                 if (puzzles1[i] == null) {
-                                    if (DEBUG) {
-                                        System.out.println("found level: "+ (i + 1));
-                                    }
+                                    log.debug("found level: "+ (i + 1));
                                     level = Options.getInstance().getDifficultyLevel(DifficultyType.EXTREME.ordinal());
                                     mode = GameMode.LEARNING;
-                                    if (DEBUG) {
-                                        System.out.println("   " + level.getName()+ "/" + mode.name());
-                                    }
+                                    log.debug("   " + level.getName()+ "/" + mode.name());
                                     break;
                                 }
                             }
@@ -278,20 +264,14 @@ public class BackgroundGeneratorThread implements Runnable {
                             setNewLevel(Options.getInstance().getActLevel());
                         }
                         puzzles1 = Options.getInstance().getPractisingPuzzles();
-                        if (DEBUG) {
-                            System.out.println("looking for pract: " + level + "/" + trLevel + "/" + Options.getInstance().getActLevel() + "/" + Options.getInstance().getPractisingPuzzlesLevel());
-                        }
+                            log.debug("looking for pract: " + level + "/" + trLevel + "/" + Options.getInstance().getActLevel() + "/" + Options.getInstance().getPractisingPuzzlesLevel());
                         if (level == null && trLevel != -1 && Options.getInstance().getActLevel() >= trLevel) {
                             for (int i = 0; i < puzzles1.length; i++) {
                                 if (puzzles1[i] == null) {
-                                    if (DEBUG) {
-                                        System.out.println("found level: " + (i + 1));
-                                    }
+                                        log.debug("found level: " + (i + 1));
                                     level = Options.getInstance().getDifficultyLevel(Options.getInstance().getPractisingPuzzlesLevel());
                                     mode = GameMode.PRACTISING;
-                                    if (DEBUG) {
-                                        System.out.println("   " + level.getName()+ "/" + mode.name());
-                                    }
+                                    log.debug("   " + level.getName()+ "/" + mode.name());
                                     break;
                                 }
                             }
@@ -300,50 +280,40 @@ public class BackgroundGeneratorThread implements Runnable {
                     //new puzzle type found?
                     if (level == null) {
                         // we are done for now
-                        if (DEBUG) {
-                            System.out.println("creation: nothing to do!");
-                        }
+                        log.debug("creation: nothing to do!");
                         break;
                     }
-                    if (DEBUG) {
-                        System.out.println("  creating " + level.getName() + "/" + mode.name());
-                    }
+                    log.debug("  creating " + level.getName() + "/" + mode.name());
                     // ok, create the puzzle
                     String puzzle = generator.generate(level, mode);
                     if (puzzle == null) {
                         //couldnt create one -> stop for now
                         // BUG: dont give up just now!
-                        if (DEBUG) {
-                            System.out.println("couldnt find suitable puzzles, retrying!");
-                        }
+                        log.debug("couldnt find suitable puzzles, retrying!");
                         break;
                     }
                     // store it
                     setSudoku(level, mode, puzzle);
-                    if (DEBUG) {
-                        System.out.println("  created in background: " + level.getName() + "/" + mode.name() + "/" + puzzle);
-                    }
+                    log.debug("  created in background: " + level.getName() + "/" + mode.name() + "/" + puzzle);
                     // and try again
                     level = null;
                     mode = null;
                 }
-                if (DEBUG) {
-                    System.out.println("Done (level = " + level + ", isInterrupted() = " + thread.isInterrupted() + ")!");
-                }
+                log.debug("Done (level = " + level + ", isInterrupted() = " + thread.isInterrupted() + ")!");
             } catch (InterruptedException ex) {
                 thread.interrupt();
             } catch (Exception ex) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error checking progress", ex);
+                log.error("Error checking progress", ex);
             }
         }
     }
-    
+
     /**
      * Gets the correct cache array from Options.
-     * 
+     *
      * @param level
      * @param mode
-     * @return 
+     * @return
      */
     private String[] getPuzzleArray(DifficultyLevel level, GameMode mode) {
         String[] puzzles = null;
@@ -360,7 +330,7 @@ public class BackgroundGeneratorThread implements Runnable {
         }
         return puzzles;
     }
-    
+
     /**
      * Utility method: gets the {@link DifficultyLevel} of the most difficult
      * training step. If no training step is set, -1 is returned.<br>
@@ -370,8 +340,8 @@ public class BackgroundGeneratorThread implements Runnable {
      * redone after a change of the games current DifficultyLevel (if the
      * current level is lower than the level of the hardest training step,
      * no new PRACTISING puzzles have to be created).
-     * 
-     * @return 
+     *
+     * @return
      */
     private int getTrainingLevel() {
         StepConfig[] conf = Options.getInstance().getOrgSolverSteps();

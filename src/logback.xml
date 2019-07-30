@@ -24,5 +24,6 @@
     <appender-ref ref="TEST_LOG"/>
   </root>
   <logger name="sudoku" level="DEBUG"/> 
+  <logger name="generator" level="DEBUG"/> 
   
 </configuration>
